@@ -3,18 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#1e40af">
+<meta name="theme-color" content="#eef1f6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#070b16" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Мои деньги">
 <title>Мои деньги</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <style>
 :root{--bg:#eef1f6;--card:#fff;--text:#0f172a;--muted:#64748b;--in:#059669;--out:#e11d48;--accent:#2563eb;--line:#e2e8f0;--chip:#f1f5f9;--shadow:0 1px 2px rgba(15,23,42,.06),0 4px 16px rgba(15,23,42,.05)}
 @media (prefers-color-scheme:dark){:root{--bg:#070b16;--card:#111827;--text:#f1f5f9;--muted:#94a3b8;--in:#34d399;--out:#fb7185;--accent:#60a5fa;--line:#1e293b;--chip:#1a2438;--shadow:none}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;background:var(--bg);color:var(--text);font:16px/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;padding-bottom:100px;font-variant-numeric:tabular-nums}
+html{background:var(--bg);min-height:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;padding-top:env(safe-area-inset-top);padding-bottom:calc(100px + env(safe-area-inset-bottom));font-variant-numeric:tabular-nums}
 .wrap{max-width:560px;margin:0 auto;padding:12px 14px}
 .h1{font-size:28px;font-weight:800;margin:8px 2px 12px;letter-spacing:-.5px}
 .sec{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin:18px 4px 8px}
