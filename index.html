@@ -7,6 +7,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Мои деньги">
 <title>Мои деньги</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <style>
 :root{--bg:#eef1f6;--card:#fff;--text:#0f172a;--muted:#64748b;--in:#059669;--out:#e11d48;--accent:#2563eb;--line:#e2e8f0;--chip:#f1f5f9;--shadow:0 1px 2px rgba(15,23,42,.06),0 4px 16px rgba(15,23,42,.05)}
 @media (prefers-color-scheme:dark){:root{--bg:#070b16;--card:#111827;--text:#f1f5f9;--muted:#94a3b8;--in:#34d399;--out:#fb7185;--accent:#60a5fa;--line:#1e293b;--chip:#1a2438;--shadow:none}}
@@ -593,6 +596,7 @@ document.getElementById('file').addEventListener('change',e=>{
 
 document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>{view=b.dataset.v;render();window.scrollTo(0,0)});
 render();
+if('serviceWorker' in navigator&&location.protocol.startsWith('http')){window.addEventListener('load',()=>{try{navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}})}
 </script>
 </body>
 </html>
