@@ -3,47 +3,98 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#111827">
+<meta name="theme-color" content="#1e40af">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Мои деньги">
 <title>Мои деньги</title>
 <style>
-:root{--bg:#f3f4f6;--card:#fff;--text:#111827;--muted:#6b7280;--in:#16a34a;--out:#dc2626;--accent:#2563eb;--line:#e5e7eb}
-@media (prefers-color-scheme:dark){:root{--bg:#0b1120;--card:#111827;--text:#f3f4f6;--muted:#9ca3af;--in:#4ade80;--out:#f87171;--accent:#60a5fa;--line:#1f2937}}
+:root{--bg:#eef1f6;--card:#fff;--text:#0f172a;--muted:#64748b;--in:#059669;--out:#e11d48;--accent:#2563eb;--line:#e2e8f0;--chip:#f1f5f9;--shadow:0 1px 2px rgba(15,23,42,.06),0 4px 16px rgba(15,23,42,.05)}
+@media (prefers-color-scheme:dark){:root{--bg:#070b16;--card:#111827;--text:#f1f5f9;--muted:#94a3b8;--in:#34d399;--out:#fb7185;--accent:#60a5fa;--line:#1e293b;--chip:#1a2438;--shadow:none}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;background:var(--bg);color:var(--text);font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding-bottom:96px}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;padding-bottom:100px;font-variant-numeric:tabular-nums}
 .wrap{max-width:560px;margin:0 auto;padding:12px 14px}
-.card{background:var(--card);border-radius:16px;padding:14px;margin-bottom:12px}
+.h1{font-size:28px;font-weight:800;margin:8px 2px 12px;letter-spacing:-.5px}
+.sec{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin:18px 4px 8px}
+.card{background:var(--card);border-radius:20px;padding:14px 16px;margin-bottom:12px;box-shadow:var(--shadow)}
 .muted{color:var(--muted);font-size:14px}
 .in{color:var(--in)}.out{color:var(--out)}
-h2{font-size:16px;margin:0 0 8px}
-.big{font-size:32px;font-weight:700;margin:2px 0}
+h2{font-size:18px;margin:0 0 8px;font-weight:700}
+.big{font-size:32px;font-weight:800;margin:2px 0;letter-spacing:-.5px}
 .row{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 button,input,select{font:inherit;color:inherit}
-.btn{border:0;border-radius:14px;padding:14px;font-weight:600;font-size:17px;color:#fff;width:100%}
+button{cursor:pointer}
+.btn{border:0;border-radius:16px;padding:15px;font-weight:700;font-size:17px;color:#fff;width:100%}
 .btn.in{background:var(--in);color:#fff}.btn.out{background:var(--out);color:#fff}
 .btn.main{background:var(--accent);color:#fff}
-.btn.ghost{background:var(--line);color:var(--text)}
-.btn.small{padding:8px 12px;font-size:14px;width:auto;border-radius:10px}
-input,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);margin-top:4px;font-size:16px}
-label{display:block;margin-top:10px;font-size:14px;color:var(--muted)}
-.item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);gap:8px}
+.btn.ghost{background:var(--chip);color:var(--text)}
+.btn.small{padding:8px 12px;font-size:14px;width:auto;border-radius:12px}
+.btn.danger{background:transparent;color:var(--out);font-weight:600}
+input,select{width:100%;padding:13px;border:1px solid var(--line);border-radius:14px;background:var(--chip);margin-top:4px;font-size:16px;outline:none}
+input:focus,select:focus{border-color:var(--accent)}
+label{display:block;margin-top:12px;font-size:14px;color:var(--muted)}
+/* hero */
+.hero{background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 55%,#6366f1 100%);color:#fff;border-radius:26px;padding:20px;margin-bottom:14px;box-shadow:0 10px 30px rgba(37,99,235,.3)}
+.hero.green{background:linear-gradient(135deg,#065f46 0%,#059669 60%,#10b981 100%);box-shadow:0 10px 30px rgba(5,150,105,.28)}
+.hero .hl{opacity:.8;font-size:14px}
+.hero .hb{font-size:38px;font-weight:800;letter-spacing:-1px;margin:2px 0 14px}
+.hero .hs{opacity:.85;font-size:14px;margin-top:-8px;margin-bottom:12px}
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chip{background:rgba(255,255,255,.16);border-radius:16px;padding:10px 12px}
+.chip span{display:block;font-size:13px;opacity:.85}.chip b{font-size:17px}
+/* quick actions */
+.acts{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:6px}
+.act{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:4px 0}
+.act i{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;font-size:24px;font-style:normal;background:var(--card);box-shadow:var(--shadow)}
+.act.in i{color:var(--in);font-weight:800;font-size:30px}.act.out i{color:var(--out);font-weight:800;font-size:30px}
+/* month nav */
+.mnav{display:flex;align-items:center;justify-content:space-between;background:var(--card);border-radius:16px;padding:4px;margin-bottom:12px;box-shadow:var(--shadow)}
+.mnav button{border:0;background:var(--chip);width:40px;height:40px;border-radius:12px;font-size:20px}
+.mnav span{font-weight:700}
+/* items */
+.item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
 .item:last-child{border-bottom:0}
-.item .l{min-width:0}.item .t{font-weight:600}
+.ic{width:42px;height:42px;border-radius:50%;background:var(--chip);display:grid;place-items:center;font-size:20px;flex:none}
+.item .l{min-width:0;flex:1}.item .t{font-weight:600}
 .item .n{white-space:nowrap;font-weight:700}
-.nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom)}
-.nav button{flex:1;background:none;border:0;padding:12px 4px;font-size:13px;color:var(--muted)}
-.nav button span{display:block;font-size:22px}
-.nav button.on{color:var(--accent);font-weight:600}
-.sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;justify-content:center;z-index:10}
-.sheet-bg.show{display:flex}
-.sheet{background:var(--card);width:100%;max-width:560px;border-radius:20px 20px 0 0;padding:16px 16px 24px;max-height:92vh;overflow:auto}
+.dayh{font-size:13px;color:var(--muted);font-weight:600;padding:10px 0 0;text-transform:capitalize}
+.dayh:first-child{padding-top:0}
+/* accounts */
+.accs{display:flex;gap:10px;overflow-x:auto;margin:0 -14px;padding:2px 14px 8px;scroll-snap-type:x proximity;scrollbar-width:none}
+.accs::-webkit-scrollbar{display:none}
+.acc{flex:none;width:158px;background:var(--card);border-radius:20px;padding:14px;box-shadow:var(--shadow);scroll-snap-align:start;border:0;text-align:left}
+.acc .ai{font-size:24px}.acc .an{color:var(--muted);font-size:13px;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.acc .ab{font-weight:800;font-size:18px}
+.acc.add{display:grid;place-items:center;border:2px dashed var(--line);background:transparent;box-shadow:none;color:var(--muted);font-weight:600;text-align:center}
+.prog{height:6px;border-radius:3px;background:var(--line);margin-top:8px;overflow:hidden}
+.prog i{display:block;height:100%;border-radius:3px;background:var(--in)}
 .bar{height:8px;border-radius:4px;background:var(--out);margin-top:4px}
-.tabs{display:flex;gap:6px;margin-bottom:10px}
-.tabs button{flex:1;padding:10px;border:0;border-radius:10px;background:var(--line);font-weight:600}
-.tabs button.on{background:var(--accent);color:#fff}
+/* nav */
+.nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);display:flex;padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
+.nav button{flex:1;background:none;border:0;padding:6px 2px;font-size:11px;color:var(--muted);font-weight:600;border-radius:14px}
+.nav button span{display:block;font-size:22px;filter:grayscale(1);opacity:.7}
+.nav button.on{color:var(--accent)}
+.nav button.on span{filter:none;opacity:1}
+/* sheet */
+.sheet-bg{position:fixed;inset:0;background:rgba(2,6,23,.55);display:none;align-items:flex-end;justify-content:center;z-index:10}
+.sheet-bg.show{display:flex}
+.sheet{background:var(--card);width:100%;max-width:560px;border-radius:26px 26px 0 0;padding:10px 18px calc(24px + env(safe-area-inset-bottom));max-height:92vh;overflow:auto}
+.grab{width:40px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 12px}
+.tabs{display:flex;gap:6px;margin-bottom:10px;background:var(--chip);padding:4px;border-radius:14px}
+.tabs button{flex:1;padding:9px;border:0;border-radius:11px;background:transparent;font-weight:600;color:var(--muted)}
+.tabs button.on{background:var(--card);color:var(--text);box-shadow:var(--shadow)}
 .hidden{display:none}
+.dlg-bg{position:fixed;inset:0;background:rgba(2,6,23,.6);display:none;align-items:center;justify-content:center;z-index:30;padding:20px}
+.dlg-bg.show{display:flex}
+.dlg{background:var(--card);border-radius:22px;padding:20px;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.dlg .dt{font-weight:600;font-size:17px}
+#toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%) translateY(20px);background:#0f172a;color:#fff;padding:12px 18px;border-radius:14px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:40;max-width:90vw;text-align:center}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .empty{text-align:center;color:var(--muted);padding:18px 0}
 .paid{opacity:.5}
+.banner{background:linear-gradient(135deg,#f59e0b,#f97316);color:#fff;border-radius:18px;padding:12px 14px;margin:8px 0 4px;display:flex;align-items:center;gap:10px}
+.banner div{flex:1;font-size:14px;font-weight:600}
+.banner button{border:0;background:#fff;color:#c2410c;font-weight:700;border-radius:12px;padding:8px 12px}
 </style>
 </head>
 <body>
@@ -59,53 +110,90 @@ label{display:block;margin-top:10px;font-size:14px;color:var(--muted)}
 
 <div class="sheet-bg" id="bg"><div class="sheet" id="sheet"></div></div>
 <input type="file" id="file" accept="application/json" class="hidden">
+<div class="dlg-bg" id="dlg"><div class="dlg" id="dlgbox"></div></div>
+<div id="toast"></div>
 
 <script>
 const KEY='money-app-v1';
-const IN_CATS=['Основная работа','Подработка','Чаевые','Другое'];
-const OUT_CATS=['Еда','Транспорт','Жильё','Связь','Здоровье','Одежда','Развлечения','Другое'];
-let S={tx:[],debts:[],shifts:[],advances:[],positions:[],closed:{},lastBackup:null};
-let view='home', month=new Date().toISOString().slice(0,7);
+const DEF=()=>({tx:[],debts:[],shifts:[],advances:[],positions:[],closed:{},accounts:[],moves:[],
+  cats:{in:['Основная работа','Подработка','Чаевые','Другое'],out:['Еда','Транспорт','Жильё','Связь','Здоровье','Одежда','Развлечения','Другое']},lastBackup:null});
+let S=DEF();
+try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(DEF(),JSON.parse(r));}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){toast('Не удалось сохранить данные в браузере')}}
 
-try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(S,JSON.parse(r));}catch(e){}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){alert('Не удалось сохранить данные в браузере')}}
+/* ---------- helpers ---------- */
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const today=()=>{const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10)};
 const fmt=n=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2}).format(n)+' ₽';
 const esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const dshort=d=>{const [y,m,dd]=d.split('-');return dd+'.'+m};
-const monthName=m=>{const [y,mm]=m.split('-');return new Date(y,mm-1,1).toLocaleDateString('ru-RU',{month:'long',year:'numeric'})};
+const dayHead=d=>{const [y,m,dd]=d.split('-').map(Number);return new Date(y,m-1,dd).toLocaleDateString('ru-RU',{day:'numeric',month:'long',weekday:'short'})};
+const monthName=m=>{const [y,mm]=m.split('-');const s=new Date(y,mm-1,1).toLocaleDateString('ru-RU',{month:'long',year:'numeric'}).replace(' г.','');return s.charAt(0).toUpperCase()+s.slice(1)};
 const sum=a=>a.reduce((s,x)=>s+x.amount,0);
+const tot=(a,k)=>a.reduce((s,x)=>s+(x[k]||0),0);
+const num=v=>parseFloat(String(v).replace(',','.'))||0;
+const ICONS={'Еда':'🍔','Транспорт':'🚌','Жильё':'🏠','Связь':'📱','Здоровье':'💊','Одежда':'👕','Развлечения':'🎬','Основная работа':'💼','Подработка':'🛠️','Чаевые':'💵','Другое':'✨'};
+const icon=c=>ICONS[c]||'🏷️';
+let view='home', month=today().slice(0,7);
 
-function render(){
-  document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===view));
-  const app=document.getElementById('app');
-  app.innerHTML={home:rHome,salary:rSalary,debts:rDebts,stats:rStats,more:rMore}[view]();
+function shiftMonth(d){const [y,m]=month.split('-').map(Number);const x=new Date(y,m-1+d,1);month=x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0');render()}
+function monthPicker(){return `<div class="mnav"><button onclick="shiftMonth(-1)">‹</button><span>${monthName(month)}</span><button onclick="shiftMonth(1)">›</button></div>`}
+function monthTx(){return S.tx.filter(t=>t.date.startsWith(month)).sort((a,b)=>b.date.localeCompare(a.date)||b.id.localeCompare(a.id))}
+
+/* ---------- accounts ---------- */
+const KIND_ICON={save:'🐷',invest:'📈',other:'💳'};
+const KIND_NAME={save:'Копилка',invest:'Инвестиции',other:'Другой счёт'};
+function accList(){return [{id:'main',name:'Основной',icon:'💳',kind:'main'}].concat(S.accounts)}
+function accName(id){const a=accList().find(x=>x.id===id);return a?a.name:'—'}
+function bal(id){
+  let b=0;
+  if(id==='main')b=sum(S.tx.filter(t=>t.type==='in'))-sum(S.tx.filter(t=>t.type==='out'));
+  S.moves.forEach(m=>{if(m.to===id)b+=m.amount;if(m.from===id)b-=m.amount});
+  return b;
+}
+function accsRow(){
+  return `<div class="accs">`+accList().map(a=>{
+    const b=bal(a.id);
+    const prog=(a.goal>0)?`<div class="prog"><i style="width:${Math.max(0,Math.min(100,b/a.goal*100))}%"></i></div><div class="muted" style="font-size:12px;margin-top:4px">цель ${fmt(a.goal)}</div>`:'';
+    return `<button class="acc" onclick="openAcc('${a.id}')"><div class="ai">${a.icon}</div><div class="an">${esc(a.name)}</div><div class="ab ${b<0?'out':''}">${fmt(b)}</div>${prog}</button>`;
+  }).join('')+`<button class="acc add" onclick="openNewAcc()">＋<br>Новый счёт</button></div>`;
 }
 
-function monthTx(){return S.tx.filter(t=>t.date.startsWith(month)).sort((a,b)=>b.date.localeCompare(a.date)||b.id.localeCompare(a.id))}
-function monthPicker(){return `<div class="card"><input type="month" value="${month}" onchange="month=this.value||month;render()"></div>`}
+/* ---------- backup banner ---------- */
+function backupBanner(){
+  const has=S.tx.length+S.debts.length+S.shifts.length+S.moves.length>0;
+  const old=!S.lastBackup||Date.now()-S.lastBackup>7*864e5;
+  if(!has||!old)return '';
+  return `<div class="banner"><span style="font-size:22px">💾</span><div>${S.lastBackup?'Копия данных устарела (больше недели)':'Ты ещё не сохранял копию данных'}</div><button onclick="exportData()">Сохранить</button></div>`;
+}
+
+/* ---------- render ---------- */
+function render(){
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===view));
+  document.getElementById('app').innerHTML={home:rHome,salary:rSalary,debts:rDebts,stats:rStats,more:rMore}[view]();
+}
 
 function rHome(){
-  const all=S.tx, bal=sum(all.filter(t=>t.type==='in'))-sum(all.filter(t=>t.type==='out'));
   const mt=monthTx(), inc=sum(mt.filter(t=>t.type==='in')), exp=sum(mt.filter(t=>t.type==='out'));
-  return `
-  <div class="card"><div class="muted">Сейчас на руках (по записям)</div>
-    <div class="big ${bal<0?'out':''}">${fmt(bal)}</div></div>
-  <div class="grid2" style="margin-bottom:12px">
-    <button class="btn in" onclick="openTx('in')">+ Доход</button>
-    <button class="btn out" onclick="openTx('out')">− Расход</button>
+  const total=accList().reduce((s,a)=>s+bal(a.id),0);
+  const groups={};mt.concat(S.shifts.filter(x=>x.date.startsWith(month)&&x.pay>0).map(x=>({shift:true,id:x.id,date:x.date,amount:x.pay}))).forEach(t=>(groups[t.date]=groups[t.date]||[]).push(t));
+  const days=Object.keys(groups).sort().reverse();
+  const list=days.length?days.map(d=>`<div class="dayh">${dayHead(d)}</div>`+groups[d].map(t=>t.shift?`<div class="item" onclick="openShift('${t.id}')"><div class="ic">🕒</div><div class="l"><div class="t">Смена</div><div class="muted">начислено, придёт с зарплатой</div></div><div class="n muted">${fmt(t.amount)}</div></div>`:`<div class="item" onclick="openTx('${t.type}','${t.id}')">
+      <div class="ic">${icon(t.cat)}</div>
+      <div class="l"><div class="t">${esc(t.cat)}</div>${t.note?`<div class="muted">${esc(t.note)}</div>`:''}</div>
+      <div class="n ${t.type}">${t.type==='in'?'+':'−'}${fmt(t.amount)}</div></div>`).join('')).join(''):'<div class="empty">В этом месяце операций нет.<br>Нажми «＋» или «−» сверху</div>';
+  return monthPicker()+`
+  <div class="hero"><div class="hl">Всего средств</div><div class="hb">${fmt(total)}</div>
+    <div class="chips"><div class="chip"><span>↓ Доходы</span><b>${fmt(inc)}</b></div><div class="chip"><span>↑ Расходы</span><b>${fmt(exp)}</b></div></div></div>
+  <div class="acts">
+    <button class="act in" onclick="openTx('in')"><i>＋</i>Доход</button>
+    <button class="act out" onclick="openTx('out')"><i>−</i>Расход</button>
+    <button class="act" onclick="openTransfer()"><i>🔁</i>Перевод</button>
+    <button class="act" onclick="openShift()"><i>🕒</i>Смена</button>
   </div>
-  ${monthPicker()}
-  <div class="grid2">
-    <div class="card"><div class="muted">Доход</div><div class="in" style="font-weight:700;font-size:20px">${fmt(inc)}</div></div>
-    <div class="card"><div class="muted">Расход</div><div class="out" style="font-weight:700;font-size:20px">${fmt(exp)}</div></div>
-  </div>
-  <div class="card"><h2>Операции · ${monthName(month)}</h2>
-  ${mt.length?mt.map(t=>`<div class="item" onclick="openTx('${t.type}','${t.id}')">
-    <div class="l"><div class="t">${esc(t.cat)}</div><div class="muted">${dshort(t.date)}${t.note?' · '+esc(t.note):''}</div></div>
-    <div class="n ${t.type}">${t.type==='in'?'+':'−'}${fmt(t.amount)}</div></div>`).join(''):'<div class="empty">Пока пусто. Нажми «+ Доход» или «− Расход»</div>'}
-  </div>`;
+  ${backupBanner()}
+  <div class="sec">Счета</div>${accsRow()}
+  <div class="sec">Операции</div><div class="card">${list}</div>`;
 }
 
 function rDebts(){
@@ -114,16 +202,17 @@ function rDebts(){
   const owe=act.filter(d=>d.dir==='owe').reduce((s,d)=>s+left(d),0);
   const lent=act.filter(d=>d.dir==='lent').reduce((s,d)=>s+left(d),0);
   const item=d=>`<div class="item ${left(d)<=0.001?'paid':''}">
+    <div class="ic">${d.dir==='owe'?'📤':'📥'}</div>
     <div class="l" onclick="openDebt('${d.id}')"><div class="t">${esc(d.who)}</div>
     <div class="muted">${dshort(d.date)}${d.note?' · '+esc(d.note):''}${d.paid?' · возвращено '+fmt(d.paid):''}</div></div>
     <div style="text-align:right"><div class="n ${d.dir==='owe'?'out':'in'}">${fmt(left(d))}</div>
-    ${left(d)>0.001?`<button class="btn small ghost" onclick="payDebt('${d.id}')">${d.dir==='owe'?'Отдал':'Вернули'}</button>`:''}</div></div>`;
-  return `
+    ${left(d)>0.001?`<button class="btn small ghost" style="margin-top:4px" onclick="payDebt('${d.id}')">${d.dir==='owe'?'Отдал':'Вернули'}</button>`:''}</div></div>`;
+  return `<div class="h1">Долги</div>
   <div class="grid2" style="margin-bottom:12px">
-    <div class="card" style="margin:0"><div class="muted">Я должен</div><div class="out" style="font-weight:700;font-size:20px">${fmt(owe)}</div></div>
-    <div class="card" style="margin:0"><div class="muted">Мне должны</div><div class="in" style="font-weight:700;font-size:20px">${fmt(lent)}</div></div>
+    <div class="card" style="margin:0"><div class="muted">Я должен</div><div class="out" style="font-weight:800;font-size:22px">${fmt(owe)}</div></div>
+    <div class="card" style="margin:0"><div class="muted">Мне должны</div><div class="in" style="font-weight:800;font-size:22px">${fmt(lent)}</div></div>
   </div>
-  <button class="btn main" style="margin-bottom:12px" onclick="openDebt()">+ Новый долг</button>
+  <button class="btn main" style="margin-bottom:12px" onclick="openDebt()">＋ Новый долг</button>
   <div class="card"><h2>Активные</h2>${act.length?act.map(item).join(''):'<div class="empty">Долгов нет 🎉</div>'}</div>
   ${done.length?`<div class="card"><h2>Закрытые</h2>${done.map(item).join('')}</div>`:''}`;
 }
@@ -133,53 +222,115 @@ function rStats(){
   const by=(arr)=>{const m={};arr.forEach(t=>m[t.cat]=(m[t.cat]||0)+t.amount);return Object.entries(m).sort((a,b)=>b[1]-a[1])};
   const e=by(exp), i=by(inc), max=e.length?e[0][1]:1;
   const net=sum(inc)-sum(exp);
-  return monthPicker()+`
-  <div class="card"><div class="muted">Итог за месяц</div><div class="big ${net<0?'out':'in'}">${net>0?'+':''}${fmt(net)}</div></div>
-  <div class="card"><h2>Откуда деньги</h2>${i.length?i.map(([c,v])=>`<div class="item"><span>${esc(c)}</span><b class="in">${fmt(v)}</b></div>`).join(''):'<div class="empty">Нет данных</div>'}</div>
-  <div class="card"><h2>Куда уходят</h2>${e.length?e.map(([c,v])=>`<div style="margin:8px 0"><div class="row"><span>${esc(c)}</span><b>${fmt(v)}</b></div><div class="bar" style="width:${Math.max(4,v/max*100)}%"></div></div>`).join(''):'<div class="empty">Нет данных</div>'}</div>`;
+  return `<div class="h1">Итоги</div>`+monthPicker()+`
+  <div class="hero ${net<0?'':'green'}"><div class="hl">Итог за месяц</div><div class="hb">${net>0?'+':''}${fmt(net)}</div>
+    <div class="chips"><div class="chip"><span>↓ Доходы</span><b>${fmt(sum(inc))}</b></div><div class="chip"><span>↑ Расходы</span><b>${fmt(sum(exp))}</b></div></div></div>
+  <div class="card"><h2>Откуда деньги</h2>${i.length?i.map(([c,v])=>`<div class="item"><div class="ic">${icon(c)}</div><div class="l t">${esc(c)}</div><b class="in">${fmt(v)}</b></div>`).join(''):'<div class="empty">Нет данных</div>'}</div>
+  <div class="card"><h2>Куда уходят</h2>${e.length?e.map(([c,v])=>`<div style="margin:10px 0"><div class="row"><span>${icon(c)} ${esc(c)}</span><b>${fmt(v)}</b></div><div class="bar" style="width:${Math.max(4,v/max*100)}%"></div></div>`).join(''):'<div class="empty">Нет данных</div>'}</div>`;
 }
 
 function rMore(){
   const lb=S.lastBackup?new Date(S.lastBackup).toLocaleDateString('ru-RU'):'ещё не делалась';
-  return `<div class="card"><h2>Резервная копия</h2>
-  <p class="muted">Данные хранятся только в этом браузере на этом устройстве. Если очистить историю или сменить телефон, они пропадут. Сохраняй копию раз в неделю.<br>Последняя копия: ${lb}</p>
-  <button class="btn main" onclick="exportData()" style="margin-bottom:8px">Скачать копию</button>
+  return `<div class="h1">Ещё</div>
+  <div class="card"><h2>Категории</h2><p class="muted">Свои категории доходов и расходов.</p>
+  <button class="btn ghost" onclick="openCats()">Настроить категории</button></div>
+  <div class="card"><h2>Резервная копия</h2>
+  <p class="muted">Данные хранятся только в этом браузере на этом устройстве. Если очистить историю или сменить телефон, они пропадут. Сохраняй копию раз в неделю (приложение напомнит).<br>Последняя копия: ${lb}</p>
+  <button class="btn main" onclick="exportData()" style="margin-bottom:8px">Сохранить копию</button>
   <button class="btn ghost" onclick="document.getElementById('file').click()">Загрузить из копии</button></div>
   <div class="card"><h2>Как пользоваться</h2>
-  <p class="muted">Каждый приход — «+ Доход» (выбери: основная работа, подработка или чаевые). Каждая трата — «− Расход». Заносить лучше в тот же день, пока помнишь. Долги ведутся отдельно во вкладке «Долги» и не влияют на баланс.</p></div>`;
+  <p class="muted">«＋» и «−» — любой приход и трата. «Перевод» — перекладывать деньги между счетами (копилка, инвестиции). «Смена» — быстрый ввод смены с чаевыми. Заносить лучше в тот же день, пока помнишь. Долги ведутся отдельно и не влияют на баланс.</p></div>`;
 }
+
+/* ---------- dialogs (вместо системных окон) ---------- */
+function toast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('show'),2800);
+}
+function dialog(o){
+  return new Promise(res=>{
+    const d=document.getElementById('dlg'), box=document.getElementById('dlgbox');
+    box.innerHTML=`<div class="dt">${esc(o.text)}</div>${o.input?`<input id="dlgin" type="${o.input}" inputmode="${o.input==='number'?'decimal':'text'}" step="any" value="${esc(o.def==null?'':o.def)}">`:''}
+    <div class="grid2" style="margin-top:14px"><button class="btn ghost" id="dno">Отмена</button><button class="btn ${o.danger?'out':'main'}" id="dyes">${esc(o.ok||'ОК')}</button></div>`;
+    d.classList.add('show');
+    const done=v=>{d.classList.remove('show');res(v)};
+    document.getElementById('dno').onclick=()=>done(o.input?null:false);
+    document.getElementById('dyes').onclick=()=>done(o.input?document.getElementById('dlgin').value:true);
+    if(o.input)setTimeout(()=>document.getElementById('dlgin').focus(),50);
+  });
+}
+const ask=(text,ok,danger)=>dialog({text,ok,danger});
 
 /* ---------- sheet ---------- */
 const bg=document.getElementById('bg'), sheet=document.getElementById('sheet');
 bg.addEventListener('click',e=>{if(e.target===bg)closeSheet()});
 function closeSheet(){bg.classList.remove('show')}
-function showSheet(h){sheet.innerHTML=h;bg.classList.add('show')}
+function showSheet(h){sheet.innerHTML='<div class="grab"></div>'+h;bg.classList.add('show')}
 
+/* ---------- transactions ---------- */
+function catOptions(type,selected){
+  const list=S.cats[type].slice();
+  if(selected&&!list.includes(selected))list.push(selected);
+  return list.map(c=>`<option ${c===selected?'selected':''}>${esc(c)}</option>`).join('')+'<option value="__new">＋ Новая категория…</option>';
+}
+async function catChange(sel,type){
+  if(sel.value!=='__new')return;
+  const n=((await dialog({text:'Название категории',input:'text',ok:'Добавить'}))||'').trim();
+  if(n){if(!S.cats[type].includes(n)){S.cats[type].push(n);save()}sel.innerHTML=catOptions(type,n)}
+  else sel.innerHTML=catOptions(type,S.cats[type][0]);
+}
 function openTx(type,id){
   const t=id?S.tx.find(x=>x.id===id):null;
+  if(t&&t.ref){
+    if(S.shifts.some(s=>s.id===t.ref)){openShift(t.ref);return}
+    if(S.advances.some(a=>a.id===t.ref)){delAdv(t.ref);return}
+    if(String(t.ref).startsWith('close-')){month=t.ref.slice(6);reopenMonth();return}
+  }
   type=t?t.type:type;
-  const cats=type==='in'?IN_CATS:OUT_CATS;
   showSheet(`<h2>${t?'Изменить':(type==='in'?'Новый доход':'Новый расход')}</h2>
   <label>Сумма</label><input id="f_amt" type="number" inputmode="decimal" step="any" placeholder="0" value="${t?t.amount:''}">
-  <label>Категория</label><select id="f_cat">${cats.map(c=>`<option ${t&&t.cat===c?'selected':''}>${c}</option>`).join('')}</select>
+  <label>Категория</label><select id="f_cat" onchange="catChange(this,'${type}')">${catOptions(type,t?t.cat:null)}</select>
   <label>Дата</label><input id="f_date" type="date" value="${t?t.date:today()}">
   <label>Заметка (необязательно)</label><input id="f_note" value="${t?esc(t.note):''}">
   <div style="margin-top:16px" class="grid2">
     <button class="btn ghost" onclick="closeSheet()">Отмена</button>
     <button class="btn ${type}" onclick="saveTx('${type}','${id||''}')">Сохранить</button></div>
-  ${t?`<button class="btn small ghost out" style="margin-top:12px;width:100%" onclick="delTx('${id}')">Удалить запись</button>`:''}`);
+  ${t?`<button class="btn danger" style="margin-top:8px" onclick="delTx('${id}')">Удалить запись</button>`:''}`);
   if(!t)setTimeout(()=>document.getElementById('f_amt').focus(),50);
 }
 function saveTx(type,id){
-  const amount=parseFloat(String(document.getElementById('f_amt').value).replace(',','.'));
-  if(!(amount>0)){alert('Введи сумму больше нуля');return}
+  const amount=num(document.getElementById('f_amt').value);
+  if(!(amount>0)){toast('Введи сумму больше нуля');return}
   const rec={type,amount,cat:document.getElementById('f_cat').value,date:document.getElementById('f_date').value||today(),note:document.getElementById('f_note').value.trim()};
+  if(rec.cat==='__new')rec.cat='Другое';
   if(id){Object.assign(S.tx.find(x=>x.id===id),rec)}else{S.tx.push(Object.assign({id:uid()},rec))}
   month=rec.date.slice(0,7);
   save();closeSheet();render();
 }
-function delTx(id){if(confirm('Удалить запись?')){S.tx=S.tx.filter(x=>x.id!==id);save();closeSheet();render()}}
+async function delTx(id){if(await ask('Удалить запись?','Удалить',true)){S.tx=S.tx.filter(x=>x.id!==id);save();closeSheet();render()}}
 
+/* ---------- categories ---------- */
+let catTab='out';
+function openCats(tab){
+  if(tab)catTab=tab;
+  const list=S.cats[catTab];
+  showSheet(`<h2>Категории</h2>
+  <div class="tabs"><button class="${catTab==='out'?'on':''}" onclick="openCats('out')">Расходы</button><button class="${catTab==='in'?'on':''}" onclick="openCats('in')">Доходы</button></div>
+  ${list.map((c,i)=>`<div class="item"><div class="ic">${icon(c)}</div><div class="l t">${esc(c)}</div><button class="btn small ghost" onclick="delCat(${i})">Удалить</button></div>`).join('')||'<div class="empty">Категорий нет</div>'}
+  <label>Новая категория</label>
+  <div class="row"><input id="nc" placeholder="Например: Кафе" style="margin:0"><button class="btn small main" onclick="addCat()">Добавить</button></div>
+  <p class="muted">Старые записи сохранятся, даже если удалить категорию.</p>
+  <button class="btn ghost" onclick="closeSheet();render()">Готово</button>`);
+}
+function addCat(){
+  const v=document.getElementById('nc').value.trim();
+  if(!v)return;
+  if(!S.cats[catTab].includes(v)){S.cats[catTab].push(v);save()}
+  openCats();
+}
+function delCat(i){S.cats[catTab].splice(i,1);save();openCats()}
+
+/* ---------- debts ---------- */
 function openDebt(id){
   const d=id?S.debts.find(x=>x.id===id):null;
   showSheet(`<h2>${d?'Изменить долг':'Новый долг'}</h2>
@@ -191,32 +342,29 @@ function openDebt(id){
   <div style="margin-top:16px" class="grid2">
     <button class="btn ghost" onclick="closeSheet()">Отмена</button>
     <button class="btn main" onclick="saveDebt('${id||''}')">Сохранить</button></div>
-  ${d?`<button class="btn small ghost out" style="margin-top:12px;width:100%" onclick="delDebt('${id}')">Удалить долг</button>`:''}`);
+  ${d?`<button class="btn danger" style="margin-top:8px" onclick="delDebt('${id}')">Удалить долг</button>`:''}`);
 }
 function saveDebt(id){
-  const amount=parseFloat(String(document.getElementById('d_amt').value).replace(',','.'));
+  const amount=num(document.getElementById('d_amt').value);
   const who=document.getElementById('d_who').value.trim();
-  if(!who){alert('Укажи, кто');return}
-  if(!(amount>0)){alert('Введи сумму больше нуля');return}
+  if(!who){toast('Укажи, кто');return}
+  if(!(amount>0)){toast('Введи сумму больше нуля');return}
   const rec={who,amount,dir:document.getElementById('d_dir').value,date:document.getElementById('d_date').value||today(),note:document.getElementById('d_note').value.trim()};
   if(id){Object.assign(S.debts.find(x=>x.id===id),rec)}else{S.debts.push(Object.assign({id:uid(),paid:0},rec))}
   save();closeSheet();render();
 }
-function delDebt(id){if(confirm('Удалить долг?')){S.debts=S.debts.filter(x=>x.id!==id);save();closeSheet();render()}}
-function payDebt(id){
+async function delDebt(id){if(await ask('Удалить долг?','Удалить',true)){S.debts=S.debts.filter(x=>x.id!==id);save();closeSheet();render()}}
+async function payDebt(id){
   const d=S.debts.find(x=>x.id===id), left=d.amount-(d.paid||0);
-  const v=prompt((d.dir==='owe'?'Сколько отдал':'Сколько вернули')+'? Осталось '+fmt(left),left);
+  const v=await dialog({text:(d.dir==='owe'?'Сколько отдал':'Сколько вернули')+'? Осталось '+fmt(left),input:'number',def:left,ok:'Готово'});
   if(v===null)return;
-  const a=parseFloat(String(v).replace(',','.'));
-  if(!(a>0)){alert('Введи сумму больше нуля');return}
+  const a=num(v);
+  if(!(a>0)){toast('Введи сумму больше нуля');return}
   d.paid=Math.min(d.amount,(d.paid||0)+a);
   save();render();
 }
 
 /* ---------- salary ---------- */
-const tot=(a,k)=>a.reduce((s,x)=>s+(x[k]||0),0);
-const num=v=>parseFloat(String(v).replace(',','.'))||0;
-
 function rSalary(){
   const byDate=(a,b)=>b.date.localeCompare(a.date);
   const sh=S.shifts.filter(x=>x.date.startsWith(month)).sort(byDate);
@@ -226,30 +374,29 @@ function rSalary(){
   if(c){
     const diff=c.received-c.expected;
     ctrl=`<div class="card"><h2>Месяц закрыт ✅</h2>
-    <div class="item"><span>Ожидалось к выдаче</span><b>${fmt(c.expected)}</b></div>
-    <div class="item"><span>Фактически получил</span><b>${fmt(c.received)}</b></div>
-    <div class="item"><span>Разница</span><b class="${Math.abs(diff)<0.01?'in':(diff<0?'out':'in')}">${Math.abs(diff)<0.01?'всё сошлось':(diff>0?'+':'')+fmt(diff)}</b></div>
+    <div class="item"><div class="l">Ожидалось к выдаче</div><b>${fmt(c.expected)}</b></div>
+    <div class="item"><div class="l">Фактически получил</div><b>${fmt(c.received)}</b></div>
+    <div class="item"><div class="l">Разница</div><b class="${diff<-0.01?'out':'in'}">${Math.abs(diff)<0.01?'всё сошлось':(diff>0?'+':'')+fmt(diff)}</b></div>
     ${diff<-0.01?'<p class="muted">Тебе недоплатили. Проверь смены и авансы.</p>':''}
     <button class="btn small ghost" style="margin-top:8px" onclick="reopenMonth()">Открыть месяц заново</button></div>`;
   }else{
     ctrl=`<button class="btn main" style="margin-bottom:12px" onclick="openClose()">Получил ЗП · закрыть месяц</button>`;
   }
-  return monthPicker()+`
-  <div class="card"><div class="muted">К получению (смены − авансы)</div><div class="big ${due<0?'out':''}">${fmt(due)}</div>
-    <div class="muted">Начислено ${fmt(pay)} · авансы ${fmt(adv)}</div>
-    <div class="muted">Чаевые за месяц: <b class="in">${fmt(tips)}</b> (в расчёт зарплаты не входят)</div></div>
+  return `<div class="h1">Зарплата</div>`+monthPicker()+`
+  <div class="hero green"><div class="hl">К получению (смены − авансы)</div><div class="hb">${fmt(due)}</div>
+    <div class="chips"><div class="chip"><span>Начислено</span><b>${fmt(pay)}</b></div><div class="chip"><span>Авансы</span><b>${fmt(adv)}</b></div></div>
+    <div class="hs" style="margin:12px 0 0">Чаевые за месяц: ${fmt(tips)} (в расчёт не входят)</div></div>
   <div class="grid2" style="margin-bottom:12px">
-    <button class="btn main" onclick="openShift()">+ Смена</button>
-    <button class="btn ghost" onclick="openAdv()">+ Аванс</button>
+    <button class="btn main" onclick="openShift()">＋ Смена</button>
+    <button class="btn ghost" onclick="openAdv()">＋ Аванс</button>
   </div>
   ${ctrl}
-  <div class="card"><h2>Смены · ${monthName(month)}</h2>
-  ${sh.length?sh.map(x=>`<div class="item" onclick="openShift('${x.id}')"><div class="l"><div class="t">${dshort(x.date)}</div>
+  <div class="card"><h2>Смены</h2>
+  ${sh.length?sh.map(x=>`<div class="item" onclick="openShift('${x.id}')"><div class="ic">🕒</div><div class="l"><div class="t">${dayHead(x.date)}</div>
     <div class="muted">${x.tips?'чаевые '+fmt(x.tips):'без чаевых'}</div></div><div class="n in">${fmt(x.pay)}</div></div>`).join(''):'<div class="empty">Смен пока нет</div>'}</div>
-  ${ad.length?`<div class="card"><h2>Авансы</h2>${ad.map(x=>`<div class="item" onclick="delAdv('${x.id}')"><div class="l"><div class="t">${dshort(x.date)}</div></div><div class="n out">−${fmt(x.amount)}</div></div>`).join('')}</div>`:''}
+  ${ad.length?`<div class="card"><h2>Авансы</h2>${ad.map(x=>`<div class="item" onclick="delAdv('${x.id}')"><div class="ic">💸</div><div class="l"><div class="t">${dayHead(x.date)}</div></div><div class="n out">−${fmt(x.amount)}</div></div>`).join('')}</div>`:''}
   <button class="btn ghost" onclick="openPos()">🧮 Позиции и ставки</button>`;
 }
-
 function openShift(id){
   const x=id?S.shifts.find(s=>s.id===id):null;
   const calc=(!x&&S.positions.length)?`<label>Калькулятор: сколько чего сделал</label>
@@ -262,7 +409,7 @@ function openShift(id){
   <label>Чаевые (₽)</label><input id="s_tips" type="number" inputmode="decimal" step="any" value="${x?x.tips||'':''}">
   <div style="margin-top:16px" class="grid2"><button class="btn ghost" onclick="closeSheet()">Отмена</button>
   <button class="btn main" onclick="saveShift('${id||''}')">Сохранить</button></div>
-  ${x?`<button class="btn small ghost out" style="margin-top:12px;width:100%" onclick="delShift('${id}')">Удалить смену</button>`:''}`);
+  ${x?`<button class="btn danger" style="margin-top:8px" onclick="delShift('${id}')">Удалить смену</button>`:''}`);
 }
 function calcPos(){
   let t=0;document.querySelectorAll('.q').forEach(i=>t+=num(i.value)*num(i.dataset.r));
@@ -271,15 +418,14 @@ function calcPos(){
 function saveShift(id){
   const pay=num(document.getElementById('s_pay').value), tips=num(document.getElementById('s_tips').value);
   const date=document.getElementById('s_date').value||today();
-  if(!(pay>0)&&!(tips>0)){alert('Введи ЗП за смену или чаевые');return}
+  if(!(pay>0)&&!(tips>0)){toast('Введи ЗП за смену или чаевые');return}
   let x=id?S.shifts.find(s=>s.id===id):null;
   if(x){Object.assign(x,{date,pay,tips})}else{x={id:uid(),date,pay,tips};S.shifts.push(x)}
   S.tx=S.tx.filter(t=>t.ref!==x.id);
   if(tips>0)S.tx.push({id:uid(),type:'in',amount:tips,cat:'Чаевые',date,note:'Смена',ref:x.id});
   month=date.slice(0,7);save();closeSheet();render();
 }
-function delShift(id){if(confirm('Удалить смену?')){S.shifts=S.shifts.filter(x=>x.id!==id);S.tx=S.tx.filter(t=>t.ref!==id);save();closeSheet();render()}}
-
+async function delShift(id){if(await ask('Удалить смену?','Удалить',true)){S.shifts=S.shifts.filter(x=>x.id!==id);S.tx=S.tx.filter(t=>t.ref!==id);save();closeSheet();render()}}
 function openAdv(){
   showSheet(`<h2>Аванс</h2>
   <label>Дата</label><input id="a_date" type="date" value="${today()}">
@@ -289,13 +435,12 @@ function openAdv(){
 }
 function saveAdv(){
   const amount=num(document.getElementById('a_amt').value), date=document.getElementById('a_date').value||today();
-  if(!(amount>0)){alert('Введи сумму больше нуля');return}
+  if(!(amount>0)){toast('Введи сумму больше нуля');return}
   const a={id:uid(),date,amount};S.advances.push(a);
   S.tx.push({id:uid(),type:'in',amount,cat:'Основная работа',date,note:'Аванс',ref:a.id});
   month=date.slice(0,7);save();closeSheet();render();
 }
-function delAdv(id){if(confirm('Удалить аванс?')){S.advances=S.advances.filter(x=>x.id!==id);S.tx=S.tx.filter(t=>t.ref!==id);save();render()}}
-
+async function delAdv(id){if(await ask('Удалить аванс?','Удалить',true)){S.advances=S.advances.filter(x=>x.id!==id);S.tx=S.tx.filter(t=>t.ref!==id);save();render()}}
 function openClose(){
   const due=tot(S.shifts.filter(x=>x.date.startsWith(month)),'pay')-tot(S.advances.filter(x=>x.date.startsWith(month)),'amount');
   showSheet(`<h2>Закрыть месяц</h2>
@@ -311,11 +456,10 @@ function saveClose(expected){
   if(received>0)S.tx.push({id:uid(),type:'in',amount:received,cat:'Основная работа',date:today(),note:'Зарплата за '+monthName(month),ref:'close-'+month});
   save();closeSheet();render();
 }
-function reopenMonth(){if(confirm('Открыть месяц заново? Запись о полученной ЗП удалится из операций.')){delete S.closed[month];S.tx=S.tx.filter(t=>t.ref!=='close-'+month);save();render()}}
-
+async function reopenMonth(){if(await ask('Открыть месяц заново? Запись о полученной ЗП удалится из операций.','Открыть')){delete S.closed[month];S.tx=S.tx.filter(t=>t.ref!=='close-'+month);save();render()}}
 function openPos(){
   showSheet(`<h2>Позиции и ставки</h2><p class="muted">Что ты делаешь на смене и сколько платят за единицу. Используется в калькуляторе при добавлении смены.</p>
-  ${S.positions.length?S.positions.map(p=>`<div class="item"><span>${esc(p.name)} · <b>${fmt(p.rate)}</b></span><button class="btn small ghost" onclick="delPos('${p.id}')">Удалить</button></div>`).join(''):'<div class="empty">Позиций нет</div>'}
+  ${S.positions.length?S.positions.map(p=>`<div class="item"><div class="l">${esc(p.name)} · <b>${fmt(p.rate)}</b></div><button class="btn small ghost" onclick="delPos('${p.id}')">Удалить</button></div>`).join(''):'<div class="empty">Позиций нет</div>'}
   <label>Название</label><input id="p_name" placeholder="Например: доставка">
   <label>Заработок за 1 шт (₽)</label><input id="p_rate" type="number" inputmode="decimal" step="any">
   <div style="margin-top:16px" class="grid2"><button class="btn ghost" onclick="closeSheet()">Закрыть</button>
@@ -323,27 +467,127 @@ function openPos(){
 }
 function addPos(){
   const name=document.getElementById('p_name').value.trim(), rate=num(document.getElementById('p_rate').value);
-  if(!name||!(rate>0)){alert('Укажи название и ставку');return}
+  if(!name||!(rate>0)){toast('Укажи название и ставку');return}
   S.positions.push({id:uid(),name,rate});save();openPos();
 }
 function delPos(id){S.positions=S.positions.filter(p=>p.id!==id);save();openPos()}
 
+/* ---------- accounts: sheets ---------- */
+function openNewAcc(){
+  showSheet(`<h2>Новый счёт</h2>
+  <label>Тип</label><select id="n_kind"><option value="save">🐷 Копилка</option><option value="invest">📈 Инвестиции</option><option value="other">💳 Другой счёт</option></select>
+  <label>Название</label><input id="n_name" placeholder="Например: На отпуск">
+  <label>Цель (₽, необязательно)</label><input id="n_goal" type="number" inputmode="decimal" step="any" placeholder="Сколько хочешь накопить">
+  <label>Сколько уже на счёте (₽)</label><input id="n_start" type="number" inputmode="decimal" step="any" placeholder="0">
+  <div style="margin-top:16px" class="grid2"><button class="btn ghost" onclick="closeSheet()">Отмена</button>
+  <button class="btn main" onclick="saveNewAcc()">Создать</button></div>`);
+}
+function saveNewAcc(){
+  const kind=document.getElementById('n_kind').value;
+  const name=document.getElementById('n_name').value.trim()||KIND_NAME[kind];
+  const goal=num(document.getElementById('n_goal').value), start=num(document.getElementById('n_start').value);
+  const a={id:uid(),name,kind,icon:KIND_ICON[kind],goal:goal>0?goal:0};
+  S.accounts.push(a);
+  if(start>0)S.moves.push({id:uid(),date:today(),from:null,to:a.id,amount:start,kind:'init',note:'Начальный остаток'});
+  save();closeSheet();render();
+}
+function moveLabel(m,id){
+  if(m.kind==='init')return 'Начальный остаток';
+  if(m.kind==='adjust')return m.to===id?'Прибыль / переоценка':'Убыток / переоценка';
+  return m.to===id?'Из: '+accName(m.from):'В: '+accName(m.to);
+}
+function openAcc(id){
+  const a=accList().find(x=>x.id===id);if(!a)return;
+  const b=bal(id);
+  const mv=S.moves.filter(m=>m.from===id||m.to===id).sort((x,y)=>y.date.localeCompare(x.date)||y.id.localeCompare(x.id));
+  let extra='';
+  if(a.kind==='invest'){
+    const invested=mv.filter(m=>m.kind!=='adjust').reduce((s,m)=>s+(m.to===id?m.amount:-m.amount),0);
+    const profit=b-invested;
+    extra=`<div class="grid2" style="margin:12px 0"><div class="card" style="margin:0;background:var(--chip);box-shadow:none"><div class="muted">Вложено</div><b>${fmt(invested)}</b></div>
+    <div class="card" style="margin:0;background:var(--chip);box-shadow:none"><div class="muted">Прибыль</div><b class="${profit<0?'out':'in'}">${profit>0?'+':''}${fmt(profit)}</b></div></div>`;
+  }
+  if(a.goal>0){
+    extra+=`<div style="margin:12px 0"><div class="row muted"><span>Цель ${fmt(a.goal)}</span><span>${Math.min(100,Math.max(0,Math.round(b/a.goal*100)))}%</span></div>
+    <div class="prog"><i style="width:${Math.max(0,Math.min(100,b/a.goal*100))}%"></i></div></div>`;
+  }
+  const btns=id==='main'
+    ?`<button class="btn main" onclick="openTransfer('main','')">Перевести на другой счёт</button>`
+    :`<div class="grid2"><button class="btn in" onclick="openTransfer('main','${id}')">Пополнить</button><button class="btn ghost" onclick="openTransfer('${id}','main')">Снять</button></div>
+      ${a.kind==='invest'?`<button class="btn ghost" style="margin-top:8px" onclick="setValue('${id}')">Обновить текущую стоимость</button>`:''}`;
+  showSheet(`<div style="text-align:center"><div style="font-size:40px">${a.icon}</div><div class="muted">${esc(a.name)}</div>
+    <div class="big ${b<0?'out':''}">${fmt(b)}</div></div>
+  ${extra}${btns}
+  <div class="sec">История</div>
+  ${mv.length?mv.slice(0,30).map(m=>`<div class="item" onclick="delMove('${m.id}','${id}')"><div class="ic">${m.kind==='transfer'?'🔁':(m.kind==='init'?'🏁':'📊')}</div>
+    <div class="l"><div class="t">${moveLabel(m,id)}</div><div class="muted">${dshort(m.date)}</div></div>
+    <div class="n ${m.to===id?'in':'out'}">${m.to===id?'+':'−'}${fmt(m.amount)}</div></div>`).join(''):`<div class="empty">${id==='main'?'Основной счёт считается из твоих доходов и расходов':'Операций пока нет'}</div>`}
+  ${id!=='main'?`<button class="btn danger" style="margin-top:8px" onclick="delAcc('${id}')">Удалить счёт</button>`:''}`);
+}
+async function delMove(mid,accId){if(await ask('Удалить эту операцию по счёту?','Удалить',true)){S.moves=S.moves.filter(m=>m.id!==mid);save();openAcc(accId);render()}}
+async function delAcc(id){
+  if(!(await ask('Удалить счёт? Переводы с ним тоже удалятся, деньги вернутся на другие счета.','Удалить',true)))return;
+  S.accounts=S.accounts.filter(a=>a.id!==id);S.moves=S.moves.filter(m=>m.from!==id&&m.to!==id);
+  save();closeSheet();render();
+}
+async function setValue(id){
+  const b=bal(id);
+  const v=await dialog({text:'Текущая стоимость счёта в ₽ (сейчас '+fmt(b)+')',input:'number',def:b,ok:'Готово'});
+  if(v===null)return;
+  const nv=num(v), diff=nv-b;
+  if(Math.abs(diff)<0.005)return;
+  S.moves.push(diff>0?{id:uid(),date:today(),from:null,to:id,amount:diff,kind:'adjust'}:{id:uid(),date:today(),from:id,to:null,amount:-diff,kind:'adjust'});
+  save();openAcc(id);render();
+}
+function openTransfer(from,to){
+  const accs=accList();
+  if(accs.length<2){toast('Сначала создай второй счёт, например копилку');openNewAcc();return}
+  from=from||'main';
+  if(!to||to===from)to=(accs.find(a=>a.id!==from)||{}).id;
+  const opts=sel=>accs.map(a=>`<option value="${a.id}" ${a.id===sel?'selected':''}>${a.icon} ${esc(a.name)}</option>`).join('');
+  showSheet(`<h2>Перевод между счетами</h2>
+  <label>Откуда</label><select id="t_from">${opts(from)}</select>
+  <label>Куда</label><select id="t_to">${opts(to)}</select>
+  <label>Сумма (₽)</label><input id="t_amt" type="number" inputmode="decimal" step="any" placeholder="0">
+  <label>Дата</label><input id="t_date" type="date" value="${today()}">
+  <div style="margin-top:16px" class="grid2"><button class="btn ghost" onclick="closeSheet()">Отмена</button>
+  <button class="btn main" onclick="saveTransfer()">Перевести</button></div>`);
+  setTimeout(()=>document.getElementById('t_amt').focus(),50);
+}
+async function saveTransfer(){
+  const from=document.getElementById('t_from').value, to=document.getElementById('t_to').value;
+  const amount=num(document.getElementById('t_amt').value), date=document.getElementById('t_date').value||today();
+  if(from===to){toast('Выбери разные счета');return}
+  if(!(amount>0)){toast('Введи сумму больше нуля');return}
+  if(bal(from)<amount&&!(await ask('На счёте «'+accName(from)+'» меньше этой суммы ('+fmt(bal(from))+'). Всё равно перевести?','Перевести')))return;
+  S.moves.push({id:uid(),date,from,to,amount,kind:'transfer'});
+  save();closeSheet();render();
+}
+
 /* ---------- backup ---------- */
-function exportData(){
-  S.lastBackup=Date.now();save();
-  const b=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(b);
-  a.download='dengi-'+today()+'.json';document.body.appendChild(a);a.click();a.remove();
-  setTimeout(()=>URL.revokeObjectURL(a.href),2000);render();
+async function exportData(){
+  const json=JSON.stringify(S,null,2), name='dengi-'+today()+'.json';
+  try{
+    const f=new File([json],name,{type:'application/json'});
+    if(navigator.canShare&&navigator.canShare({files:[f]})){
+      await navigator.share({files:[f]});
+      S.lastBackup=Date.now();save();render();return;
+    }
+  }catch(e){if(e&&e.name==='AbortError')return}
+  const b=new Blob([json],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+  S.lastBackup=Date.now();save();render();
 }
 document.getElementById('file').addEventListener('change',e=>{
   const f=e.target.files[0];if(!f)return;
   const r=new FileReader();
-  r.onload=()=>{try{
+  r.onload=async()=>{try{
     const d=JSON.parse(r.result);
     if(!Array.isArray(d.tx)||!Array.isArray(d.debts))throw 0;
-    if(confirm('Заменить текущие данные данными из копии?')){S=Object.assign({tx:[],debts:[],shifts:[],advances:[],positions:[],closed:{},lastBackup:null},d);save();render()}
-  }catch(_){alert('Это не похоже на файл копии')}};
+    if(await ask('Заменить текущие данные данными из копии?','Заменить',true)){S=Object.assign(DEF(),d);save();render()}
+  }catch(_){toast('Это не похоже на файл копии')}};
   r.readAsText(f);e.target.value='';
 });
 
