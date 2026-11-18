@@ -51,6 +51,7 @@ label{display:block;margin-top:10px;font-size:14px;color:var(--muted)}
 
 <nav class="nav">
   <button data-v="home" class="on"><span>🏠</span>Главная</button>
+  <button data-v="salary"><span>💼</span>ЗП</button>
   <button data-v="debts"><span>🤝</span>Долги</button>
   <button data-v="stats"><span>📊</span>Итоги</button>
   <button data-v="more"><span>⚙️</span>Ещё</button>
@@ -63,7 +64,7 @@ label{display:block;margin-top:10px;font-size:14px;color:var(--muted)}
 const KEY='money-app-v1';
 const IN_CATS=['Основная работа','Подработка','Чаевые','Другое'];
 const OUT_CATS=['Еда','Транспорт','Жильё','Связь','Здоровье','Одежда','Развлечения','Другое'];
-let S={tx:[],debts:[],lastBackup:null};
+let S={tx:[],debts:[],shifts:[],advances:[],positions:[],closed:{},lastBackup:null};
 let view='home', month=new Date().toISOString().slice(0,7);
 
 try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(S,JSON.parse(r));}catch(e){}
@@ -79,7 +80,7 @@ const sum=a=>a.reduce((s,x)=>s+x.amount,0);
 function render(){
   document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===view));
   const app=document.getElementById('app');
-  app.innerHTML={home:rHome,debts:rDebts,stats:rStats,more:rMore}[view]();
+  app.innerHTML={home:rHome,salary:rSalary,debts:rDebts,stats:rStats,more:rMore}[view]();
 }
 
 function monthTx(){return S.tx.filter(t=>t.date.startsWith(month)).sort((a,b)=>b.date.localeCompare(a.date)||b.id.localeCompare(a.id))}
@@ -212,6 +213,121 @@ function payDebt(id){
   save();render();
 }
 
+/* ---------- salary ---------- */
+const tot=(a,k)=>a.reduce((s,x)=>s+(x[k]||0),0);
+const num=v=>parseFloat(String(v).replace(',','.'))||0;
+
+function rSalary(){
+  const byDate=(a,b)=>b.date.localeCompare(a.date);
+  const sh=S.shifts.filter(x=>x.date.startsWith(month)).sort(byDate);
+  const ad=S.advances.filter(x=>x.date.startsWith(month)).sort(byDate);
+  const pay=tot(sh,'pay'), tips=tot(sh,'tips'), adv=tot(ad,'amount'), due=pay-adv, c=S.closed[month];
+  let ctrl='';
+  if(c){
+    const diff=c.received-c.expected;
+    ctrl=`<div class="card"><h2>Месяц закрыт ✅</h2>
+    <div class="item"><span>Ожидалось к выдаче</span><b>${fmt(c.expected)}</b></div>
+    <div class="item"><span>Фактически получил</span><b>${fmt(c.received)}</b></div>
+    <div class="item"><span>Разница</span><b class="${Math.abs(diff)<0.01?'in':(diff<0?'out':'in')}">${Math.abs(diff)<0.01?'всё сошлось':(diff>0?'+':'')+fmt(diff)}</b></div>
+    ${diff<-0.01?'<p class="muted">Тебе недоплатили. Проверь смены и авансы.</p>':''}
+    <button class="btn small ghost" style="margin-top:8px" onclick="reopenMonth()">Открыть месяц заново</button></div>`;
+  }else{
+    ctrl=`<button class="btn main" style="margin-bottom:12px" onclick="openClose()">Получил ЗП · закрыть месяц</button>`;
+  }
+  return monthPicker()+`
+  <div class="card"><div class="muted">К получению (смены − авансы)</div><div class="big ${due<0?'out':''}">${fmt(due)}</div>
+    <div class="muted">Начислено ${fmt(pay)} · авансы ${fmt(adv)}</div>
+    <div class="muted">Чаевые за месяц: <b class="in">${fmt(tips)}</b> (в расчёт зарплаты не входят)</div></div>
+  <div class="grid2" style="margin-bottom:12px">
+    <button class="btn main" onclick="openShift()">+ Смена</button>
+    <button class="btn ghost" onclick="openAdv()">+ Аванс</button>
+  </div>
+  ${ctrl}
+  <div class="card"><h2>Смены · ${monthName(month)}</h2>
+  ${sh.length?sh.map(x=>`<div class="item" onclick="openShift('${x.id}')"><div class="l"><div class="t">${dshort(x.date)}</div>
+    <div class="muted">${x.tips?'чаевые '+fmt(x.tips):'без чаевых'}</div></div><div class="n in">${fmt(x.pay)}</div></div>`).join(''):'<div class="empty">Смен пока нет</div>'}</div>
+  ${ad.length?`<div class="card"><h2>Авансы</h2>${ad.map(x=>`<div class="item" onclick="delAdv('${x.id}')"><div class="l"><div class="t">${dshort(x.date)}</div></div><div class="n out">−${fmt(x.amount)}</div></div>`).join('')}</div>`:''}
+  <button class="btn ghost" onclick="openPos()">🧮 Позиции и ставки</button>`;
+}
+
+function openShift(id){
+  const x=id?S.shifts.find(s=>s.id===id):null;
+  const calc=(!x&&S.positions.length)?`<label>Калькулятор: сколько чего сделал</label>
+    ${S.positions.map(p=>`<div class="row" style="margin-top:6px"><span>${esc(p.name)} <span class="muted">· ${fmt(p.rate)}</span></span>
+    <input class="q" data-r="${p.rate}" type="number" inputmode="decimal" placeholder="0" style="width:90px;margin:0" oninput="calcPos()"></div>`).join('')}`:'';
+  showSheet(`<h2>${x?'Изменить смену':'Новая смена'}</h2>
+  <label>Дата</label><input id="s_date" type="date" value="${x?x.date:today()}">
+  ${calc}
+  <label>ЗП за смену (₽)</label><input id="s_pay" type="number" inputmode="decimal" step="any" value="${x?x.pay:''}">
+  <label>Чаевые (₽)</label><input id="s_tips" type="number" inputmode="decimal" step="any" value="${x?x.tips||'':''}">
+  <div style="margin-top:16px" class="grid2"><button class="btn ghost" onclick="closeSheet()">Отмена</button>
+  <button class="btn main" onclick="saveShift('${id||''}')">Сохранить</button></div>
+  ${x?`<button class="btn small ghost out" style="margin-top:12px;width:100%" onclick="delShift('${id}')">Удалить смену</button>`:''}`);
+}
+function calcPos(){
+  let t=0;document.querySelectorAll('.q').forEach(i=>t+=num(i.value)*num(i.dataset.r));
+  document.getElementById('s_pay').value=t?Math.round(t*100)/100:'';
+}
+function saveShift(id){
+  const pay=num(document.getElementById('s_pay').value), tips=num(document.getElementById('s_tips').value);
+  const date=document.getElementById('s_date').value||today();
+  if(!(pay>0)&&!(tips>0)){alert('Введи ЗП за смену или чаевые');return}
+  let x=id?S.shifts.find(s=>s.id===id):null;
+  if(x){Object.assign(x,{date,pay,tips})}else{x={id:uid(),date,pay,tips};S.shifts.push(x)}
+  S.tx=S.tx.filter(t=>t.ref!==x.id);
+  if(tips>0)S.tx.push({id:uid(),type:'in',amount:tips,cat:'Чаевые',date,note:'Смена',ref:x.id});
+  month=date.slice(0,7);save();closeSheet();render();
+}
+function delShift(id){if(confirm('Удалить смену?')){S.shifts=S.shifts.filter(x=>x.id!==id);S.tx=S.tx.filter(t=>t.ref!==id);save();closeSheet();render()}}
+
+function openAdv(){
+  showSheet(`<h2>Аванс</h2>
+  <label>Дата</label><input id="a_date" type="date" value="${today()}">
+  <label>Сумма (₽)</label><input id="a_amt" type="number" inputmode="decimal" step="any">
+  <div style="margin-top:16px" class="grid2"><button class="btn ghost" onclick="closeSheet()">Отмена</button>
+  <button class="btn main" onclick="saveAdv()">Сохранить</button></div>`);
+}
+function saveAdv(){
+  const amount=num(document.getElementById('a_amt').value), date=document.getElementById('a_date').value||today();
+  if(!(amount>0)){alert('Введи сумму больше нуля');return}
+  const a={id:uid(),date,amount};S.advances.push(a);
+  S.tx.push({id:uid(),type:'in',amount,cat:'Основная работа',date,note:'Аванс',ref:a.id});
+  month=date.slice(0,7);save();closeSheet();render();
+}
+function delAdv(id){if(confirm('Удалить аванс?')){S.advances=S.advances.filter(x=>x.id!==id);S.tx=S.tx.filter(t=>t.ref!==id);save();render()}}
+
+function openClose(){
+  const due=tot(S.shifts.filter(x=>x.date.startsWith(month)),'pay')-tot(S.advances.filter(x=>x.date.startsWith(month)),'amount');
+  showSheet(`<h2>Закрыть месяц</h2>
+  <p class="muted">Ожидалось к выдаче (смены − авансы): <b>${fmt(due)}</b></p>
+  <label>Сколько фактически получил (₽)</label><input id="c_amt" type="number" inputmode="decimal" step="any" value="${due>0?due:''}">
+  <div style="margin-top:16px" class="grid2"><button class="btn ghost" onclick="closeSheet()">Отмена</button>
+  <button class="btn main" onclick="saveClose(${due})">Закрыть</button></div>`);
+}
+function saveClose(expected){
+  const received=num(document.getElementById('c_amt').value);
+  S.closed[month]={expected,received,date:today()};
+  S.tx=S.tx.filter(t=>t.ref!=='close-'+month);
+  if(received>0)S.tx.push({id:uid(),type:'in',amount:received,cat:'Основная работа',date:today(),note:'Зарплата за '+monthName(month),ref:'close-'+month});
+  save();closeSheet();render();
+}
+function reopenMonth(){if(confirm('Открыть месяц заново? Запись о полученной ЗП удалится из операций.')){delete S.closed[month];S.tx=S.tx.filter(t=>t.ref!=='close-'+month);save();render()}}
+
+function openPos(){
+  showSheet(`<h2>Позиции и ставки</h2><p class="muted">Что ты делаешь на смене и сколько платят за единицу. Используется в калькуляторе при добавлении смены.</p>
+  ${S.positions.length?S.positions.map(p=>`<div class="item"><span>${esc(p.name)} · <b>${fmt(p.rate)}</b></span><button class="btn small ghost" onclick="delPos('${p.id}')">Удалить</button></div>`).join(''):'<div class="empty">Позиций нет</div>'}
+  <label>Название</label><input id="p_name" placeholder="Например: доставка">
+  <label>Заработок за 1 шт (₽)</label><input id="p_rate" type="number" inputmode="decimal" step="any">
+  <div style="margin-top:16px" class="grid2"><button class="btn ghost" onclick="closeSheet()">Закрыть</button>
+  <button class="btn main" onclick="addPos()">Добавить</button></div>`);
+}
+function addPos(){
+  const name=document.getElementById('p_name').value.trim(), rate=num(document.getElementById('p_rate').value);
+  if(!name||!(rate>0)){alert('Укажи название и ставку');return}
+  S.positions.push({id:uid(),name,rate});save();openPos();
+}
+function delPos(id){S.positions=S.positions.filter(p=>p.id!==id);save();openPos()}
+
 /* ---------- backup ---------- */
 function exportData(){
   S.lastBackup=Date.now();save();
@@ -226,7 +342,7 @@ document.getElementById('file').addEventListener('change',e=>{
   r.onload=()=>{try{
     const d=JSON.parse(r.result);
     if(!Array.isArray(d.tx)||!Array.isArray(d.debts))throw 0;
-    if(confirm('Заменить текущие данные данными из копии?')){S=Object.assign({tx:[],debts:[],lastBackup:null},d);save();render()}
+    if(confirm('Заменить текущие данные данными из копии?')){S=Object.assign({tx:[],debts:[],shifts:[],advances:[],positions:[],closed:{},lastBackup:null},d);save();render()}
   }catch(_){alert('Это не похоже на файл копии')}};
   r.readAsText(f);e.target.value='';
 });
