@@ -47,9 +47,9 @@ label{display:block;margin-top:12px;font-size:14px;color:var(--muted)}
 .chip{background:rgba(255,255,255,.16);border-radius:16px;padding:10px 12px}
 .chip span{display:block;font-size:13px;opacity:.85}.chip b{font-size:17px}
 /* quick actions */
-.acts{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:6px}
+.acts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;margin-bottom:6px}
 .act{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:4px 0}
-.act i{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;font-size:24px;font-style:normal;background:var(--card);box-shadow:var(--shadow)}
+.act{font-size:11px}.act i{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;font-size:24px;font-style:normal;background:var(--card);box-shadow:var(--shadow)}
 .act.in i{color:var(--in);font-weight:800;font-size:30px}.act.out i{color:var(--out);font-weight:800;font-size:30px}
 /* month nav */
 .mnav{display:flex;align-items:center;justify-content:space-between;background:var(--card);border-radius:16px;padding:4px;margin-bottom:12px;box-shadow:var(--shadow)}
@@ -72,7 +72,7 @@ label{display:block;margin-top:12px;font-size:14px;color:var(--muted)}
 .acc.add{display:grid;place-items:center;border:2px dashed var(--line);background:transparent;box-shadow:none;color:var(--muted);font-weight:600;text-align:center}
 .prog{height:6px;border-radius:3px;background:var(--line);margin-top:8px;overflow:hidden}
 .prog i{display:block;height:100%;border-radius:3px;background:var(--in)}
-.bar{height:8px;border-radius:4px;background:var(--out);margin-top:4px}
+.budget-hero{position:relative;padding:22px 20px 18px;margin:8px 0 14px;border-radius:26px;background:#2d43c8;color:#fff;box-shadow:0 10px 28px rgba(37,99,235,.2)}.budget-hero .bh-label{font-size:15px;opacity:.9}.budget-hero .bh-value{font-size:clamp(42px,12vw,68px);font-weight:850;letter-spacing:-2px;line-height:1.12;margin:8px 0 18px}.budget-hero .bh-progress{height:9px;background:rgba(255,255,255,.3);border-radius:9px;overflow:hidden;margin:12px 0 18px}.budget-hero .bh-progress i{display:block;height:100%;background:#fff;border-radius:9px}.budget-hero .bh-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;border-top:1px solid rgba(255,255,255,.3);padding-top:14px}.budget-hero .bh-meta span{display:block;font-size:12px;opacity:.8}.budget-hero .bh-meta b{display:block;font-size:17px;margin-top:3px}.budget-top{display:flex;align-items:center;justify-content:space-between;margin:8px 2px 0}.budget-settings{border:0;background:var(--card);color:var(--text);border-radius:14px;width:46px;height:46px;font-size:23px;box-shadow:var(--shadow)}.pockets{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.pocket{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px 10px;min-width:0}.pocket .pn{font-weight:700;font-size:14px;white-space:nowrap}.pocket .pv{font-weight:800;font-size:18px;margin:10px 0 4px}.pocket .pd{font-size:11px;color:var(--muted);min-height:32px}.pocket button{width:100%;margin-top:8px;padding:9px 4px;font-size:12px;border-radius:12px;border:1px solid var(--line);background:var(--chip);font-weight:700}.bar{height:8px;border-radius:4px;background:var(--out);margin-top:4px}
 /* nav */
 .nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);display:flex;padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
 .nav button{flex:1;background:none;border:0;padding:6px 2px;font-size:11px;color:var(--muted);font-weight:600;border-radius:14px}
@@ -120,9 +120,13 @@ label{display:block;margin-top:12px;font-size:14px;color:var(--muted)}
 <script>
 const KEY='money-app-v1';
 const DEF=()=>({tx:[],debts:[],shifts:[],advances:[],positions:[],closed:{},accounts:[],moves:[],
+  budget:{nextIncome:'',dailyOverride:0,pockets:{polina:0,dream:0,reserve:0},split:{polina:20,dream:25,reserve:15}},
   cats:{in:['Основная работа','Подработка','Чаевые','Другое'],out:['Еда','Транспорт','Жильё','Связь','Здоровье','Одежда','Развлечения','Другое']},lastBackup:null});
 let S=DEF();
 try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(DEF(),JSON.parse(r));}catch(e){}
+S.budget=Object.assign({nextIncome:'',dailyOverride:0,pockets:{polina:0,dream:0,reserve:0},split:{polina:20,dream:25,reserve:15}},S.budget||{});S.budget.pockets=Object.assign({polina:0,dream:0,reserve:0},S.budget.pockets||{});S.budget.split=Object.assign({polina:20,dream:25,reserve:15},S.budget.split||{});
+// Однократное объединение старых дополнительных счетов с Основным без потери их остатка.
+if(Array.isArray(S.accounts)&&S.accounts.length){const legacy=S.accounts.map(a=>a.id);let moved=0;S.moves.forEach(m=>{if(legacy.includes(m.to)&&m.from!=='main'&&!legacy.includes(m.from))moved+=m.amount;if(legacy.includes(m.from)&&m.to!=='main'&&!legacy.includes(m.to))moved-=m.amount});S.moves=S.moves.filter(m=>!legacy.includes(m.from)&&!legacy.includes(m.to));if(moved>0)S.moves.push({id:'legacy-'+Date.now(),date:new Date().toISOString().slice(0,10),from:null,to:'main',amount:moved,kind:'legacy_merge',note:'Объединение старых счетов'});S.accounts=[];try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){toast('Не удалось сохранить данные в браузере')}}
 
 /* ---------- helpers ---------- */
@@ -145,24 +149,16 @@ function monthPicker(){return `<div class="mnav"><button onclick="shiftMonth(-1)
 function monthTx(){return S.tx.filter(t=>t.date.startsWith(month)).sort((a,b)=>b.date.localeCompare(a.date)||b.id.localeCompare(a.id))}
 
 /* ---------- accounts ---------- */
-const KIND_ICON={save:'🐷',invest:'📈',other:'💳'};
-const KIND_NAME={save:'Копилка',invest:'Инвестиции',other:'Другой счёт'};
-function accList(){return [{id:'main',name:'Основной',icon:'💳',kind:'main'}].concat(S.accounts)}
+const POCKETS=[{id:'pocket_polina',key:'polina',name:'Полина',icon:'🩷',kind:'pocket'},{id:'pocket_dream',key:'dream',name:'Мечта',icon:'🟢',kind:'pocket'},{id:'pocket_reserve',key:'reserve',name:'Резерв',icon:'🟡',kind:'pocket'}];
+function accList(){return [{id:'main',name:'Основной',icon:'💳',kind:'main'}].concat(POCKETS)}
 function accName(id){const a=accList().find(x=>x.id===id);return a?a.name:'—'}
 function bal(id){
+  if(id&&id.startsWith('pocket_')){const key=id.slice(7);return Number(S.budget.pockets[key])||0}
   let b=0;
   if(id==='main')b=sum(S.tx.filter(t=>t.type==='in'))-sum(S.tx.filter(t=>t.type==='out'));
-  S.moves.forEach(m=>{if(m.to===id)b+=m.amount;if(m.from===id)b-=m.amount});
+  S.moves.forEach(m=>{if(m.kind==='pocket_transfer')return;if(m.to===id)b+=m.amount;if(m.from===id)b-=m.amount});
   return b;
 }
-function accsRow(){
-  return `<div class="accs">`+accList().map(a=>{
-    const b=bal(a.id);
-    const prog=(a.goal>0)?`<div class="prog"><i style="width:${Math.max(0,Math.min(100,b/a.goal*100))}%"></i></div><div class="muted" style="font-size:12px;margin-top:4px">цель ${fmt(a.goal)}</div>`:'';
-    return `<button class="acc" onclick="openAcc('${a.id}')"><div class="ai">${a.icon}</div><div class="an">${esc(a.name)}</div><div class="ab ${b<0?'out':''}">${fmt(b)}</div>${prog}</button>`;
-  }).join('')+`<button class="acc add" onclick="openNewAcc()">＋<br>Новый счёт</button></div>`;
-}
-
 /* ---------- backup banner ---------- */
 function backupBanner(){
   const has=S.tx.length+S.debts.length+S.shifts.length+S.moves.length>0;
@@ -177,26 +173,77 @@ function render(){
   document.getElementById('app').innerHTML={home:rHome,salary:rSalary,debts:rDebts,stats:rStats,more:rMore}[view]();
 }
 
+function budgetDays(){
+  const b=S.budget||(S.budget={nextIncome:'',dailyOverride:0,pockets:{polina:0,dream:0,reserve:0},split:{polina:20,dream:25,reserve:15}});
+  if(!b.nextIncome){const d=new Date();d.setDate(10);if(d<=new Date())d.setMonth(d.getMonth()+1);b.nextIncome=d.toISOString().slice(0,10)}
+  const now=new Date(today()+'T00:00:00'), next=new Date(b.nextIncome+'T00:00:00');
+  return Math.max(1,Math.ceil((next-now)/86400000));
+}
+function dailyBudgetData(){
+  const b=S.budget||(S.budget={nextIncome:'',dailyOverride:0,pockets:{polina:0,dream:0,reserve:0},split:{polina:20,dream:25,reserve:15}});
+  const days=budgetDays(), spent=S.tx.filter(t=>t.type==='out'&&t.date===today()).reduce((a,t)=>a+t.amount,0);
+  const pocketTotal=(b.pockets?.polina||0)+(b.pockets?.dream||0)+(b.pockets?.reserve||0);
+  const base=Math.max(0,bal('main')-pocketTotal);
+  // Ручной лимит — это верхняя граница: пополнение копилок тоже уменьшает дневной бюджет.
+  const automaticLimit=base/days;
+  const limit=b.dailyOverride>0?Math.min(b.dailyOverride,automaticLimit):automaticLimit;
+  return {days,spent,limit,remaining:Math.max(0,limit-spent),tomorrow:Math.max(0,(base-spent)/Math.max(1,days-1))};
+}
+function openBudgetSettings(){
+ const b=S.budget, d=dailyBudgetData();
+ showSheet(`<h2>Настройки дневного бюджета</h2>
+ <label>Дата следующего дохода</label><input id="b_next" type="date" value="${b.nextIncome||''}">
+ <label>Лимит на день (₽, 0 — рассчитывать автоматически)</label><input id="b_daily" type="number" inputmode="decimal" value="${b.dailyOverride||0}">
+ <div class="sec">Распределение новых доходов</div>
+ <label>Полина, %</label><input id="b_pol" type="number" value="${b.split?.polina??20}">
+ <label>Мечта, %</label><input id="b_dream" type="number" value="${b.split?.dream??25}">
+ <label>Резерв, %</label><input id="b_res" type="number" value="${b.split?.reserve??15}">
+ <p class="muted">Доли накоплений будут автоматически учитываться при добавлении нового дохода. Общая доля не должна превышать 100%.</p>
+ <button class="btn main" onclick="saveBudgetSettings()">Сохранить</button>`);
+}
+function saveBudgetSettings(){
+ const p=num(document.getElementById('b_pol').value),d=num(document.getElementById('b_dream').value),r=num(document.getElementById('b_res').value);
+ if(p<0||d<0||r<0||p+d+r>100){toast('Сумма процентов должна быть от 0 до 100');return}
+ S.budget.nextIncome=document.getElementById('b_next').value||S.budget.nextIncome;
+ S.budget.dailyOverride=Math.max(0,num(document.getElementById('b_daily').value));
+ S.budget.split={polina:p,dream:d,reserve:r};save();closeSheet();render();
+}
+async function pocketAction(key,action){
+ if(key==='dream'&&action==='destroy')return destroyDream();
+ toast('Используй кнопку «Перевод», чтобы управлять накоплениями.');
+}
+async function destroyDream(){
+ const available=Number(S.budget.pockets.dream)||0;
+ if(available<=0){toast('В «Мечте» пока нет накоплений');return}
+ const v=await dialog({text:'Сколько списать из «Мечты»? Доступно '+fmt(available),input:'number',ok:'Продолжить'});
+ if(v===null)return;const n=num(v);
+ if(!Number.isFinite(n)||n<=0){toast('Введи сумму больше нуля');return}
+ if(n>available){toast('Сумма больше накоплений в «Мечте»');return}
+ if(!await ask('Подтверждение 1 из 3. Списать '+fmt(n)+' из копилки «Мечта»?','Да, продолжить',true))return;
+ if(!await ask('Подтверждение 2 из 3. Эти деньги НЕ поступят в основной бюджет и не будут записаны как доход.','Понимаю, продолжить',true))return;
+ if(!await ask('Подтверждение 3 из 3. После подтверждения '+fmt(n)+' исчезнут из накоплений без возможности восстановления. Списать?','Окончательно списать',true))return;
+ S.budget.pockets.dream=Math.max(0,available-n);
+ S.moves.push({id:uid(),date:today(),from:'main',to:null,amount:n,kind:'dream_destroy',note:'Списание из копилки Мечта'});
+ save();render();toast('Сумма списана из «Мечты» без зачисления в бюджет.');
+}
+function openAccounts(){
+ const rows=accList().map(a=>`<button class="acc" onclick="openAcc('${a.id}')"><div class="ai">${a.icon}</div><div class="an">${esc(a.name)}</div><div class="ab">${fmt(bal(a.id))}</div></button>`).join('');
+ showSheet(`<h2>Счета и накопления</h2><div class="accs" style="margin:8px -14px">${rows}</div><p class="muted">Все переводы между Основным счётом и накоплениями выполняются через кнопку «Перевод».</p>`);
+}
 function rHome(){
   const mt=monthTx(), inc=sum(mt.filter(t=>t.type==='in')), exp=sum(mt.filter(t=>t.type==='out'));
-  const total=accList().reduce((s,a)=>s+bal(a.id),0);
   const groups={};mt.concat(S.shifts.filter(x=>x.date.startsWith(month)&&x.pay>0).map(x=>({shift:true,id:x.id,date:x.date,amount:x.pay}))).forEach(t=>(groups[t.date]=groups[t.date]||[]).push(t));
   const days=Object.keys(groups).sort().reverse();
-  const list=days.length?days.map(d=>`<div class="dayh">${dayHead(d)}</div>`+groups[d].map(t=>t.shift?`<div class="item" onclick="openShift('${t.id}')"><div class="ic">🕒</div><div class="l"><div class="t">Смена</div><div class="muted">начислено, придёт с зарплатой</div></div><div class="n muted">${fmt(t.amount)}</div></div>`:`<div class="item" onclick="openTx('${t.type}','${t.id}')">
-      <div class="ic">${icon(t.cat)}</div>
-      <div class="l"><div class="t">${esc(t.cat)}</div>${t.note?`<div class="muted">${esc(t.note)}</div>`:''}</div>
-      <div class="n ${t.type}">${t.type==='in'?'+':'−'}${fmt(t.amount)}</div></div>`).join('')).join(''):'<div class="empty">В этом месяце операций нет.<br>Нажми «＋» или «−» сверху</div>';
-  return monthPicker()+`
-  <div class="hero"><div class="hl">Всего средств</div><div class="hb">${fmt(total)}</div>
-    <div class="chips"><div class="chip"><span>↓ Доходы</span><b>${fmt(inc)}</b></div><div class="chip"><span>↑ Расходы</span><b>${fmt(exp)}</b></div></div></div>
-  <div class="acts">
-    <button class="act in" onclick="openTx('in')"><i>＋</i>Доход</button>
-    <button class="act out" onclick="openTx('out')"><i>−</i>Расход</button>
-    <button class="act" onclick="openTransfer()"><i>🔁</i>Перевод</button>
-    <button class="act" onclick="openShift()"><i>🕒</i>Смена</button>
-  </div>
-  ${backupBanner()}
-  <div class="sec">Счета</div>${accsRow()}
+  const list=days.length?days.map(d=>`<div class="dayh">${dayHead(d)}</div>`+groups[d].map(t=>t.shift?`<div class="item" onclick="openShift('${t.id}')"><div class="ic">🕒</div><div class="l"><div class="t">Смена</div><div class="muted">начислено, придёт с зарплатой</div></div><div class="n muted">${fmt(t.amount)}</div></div>`:`<div class="item" onclick="openTx('${t.type}','${t.id}')"><div class="ic">${icon(t.cat)}</div><div class="l"><div class="t">${esc(t.cat)}</div>${t.note?`<div class="muted">${esc(t.note)}</div>`:''}</div><div class="n ${t.type}">${t.type==='in'?'+':'−'}${fmt(t.amount)}</div></div>`).join('')).join(''):'<div class="empty">В этом месяце операций нет.</div>';
+  const bd=dailyBudgetData(), pockets=S.budget.pockets||{};
+  const progress=bd.limit>0?Math.min(100,bd.spent/bd.limit*100):0;
+  return monthPicker()+`<div class="budget-top"><div class="muted">Лимит до ${dshort(S.budget.nextIncome)} · ${bd.days} дн.</div><button class="budget-settings" aria-label="Настройки дневного бюджета" onclick="openBudgetSettings()">☷</button></div>
+  <div class="budget-hero"><div class="bh-label">Можно потратить сегодня</div><div class="bh-value">${fmt(bd.remaining)}</div><div class="bh-progress"><i style="width:${progress}%"></i></div><div class="bh-meta"><div><span>Лимит дня</span><b>${fmt(bd.limit)}</b></div><div><span>Потрачено</span><b>${fmt(bd.spent)}</b></div><div><span>Завтра</span><b>${fmt(bd.tomorrow)}</b></div></div></div>
+  <div class="acts"><button class="act in" onclick="openTx('in')"><i>＋</i>Доход</button><button class="act out" onclick="openTx('out')"><i>−</i>Расход</button><button class="act" onclick="openTransfer()"><i>🔁</i>Перевод</button><button class="act" onclick="openAccounts()"><i>💳</i>Счета</button></div>
+  ${backupBanner()}<div class="sec">Накопления</div><div class="pockets">
+  <div class="pocket"><div class="pn">🩷 Полина</div><div class="pv">${fmt(pockets.polina||0)}</div><div class="pd">${S.budget.split?.polina??20}% · отдать раз в месяц</div></div>
+  <div class="pocket"><div class="pn">🟢 Мечта</div><div class="pv">${fmt(pockets.dream||0)}</div><div class="pd">${S.budget.split?.dream??25}% · копится</div><button onclick="destroyDream()" ${!(pockets.dream>0)?'disabled':''}>Списать</button></div>
+  <div class="pocket"><div class="pn">🟡 Резерв</div><div class="pv">${fmt(pockets.reserve||0)}</div><div class="pd">${S.budget.split?.reserve??15}% · на нехватку</div></div></div>
   <div class="sec">Операции</div><div class="card">${list}</div>`;
 }
 
@@ -307,7 +354,7 @@ function saveTx(type,id){
   if(!(amount>0)){toast('Введи сумму больше нуля');return}
   const rec={type,amount,cat:document.getElementById('f_cat').value,date:document.getElementById('f_date').value||today(),note:document.getElementById('f_note').value.trim()};
   if(rec.cat==='__new')rec.cat='Другое';
-  if(id){Object.assign(S.tx.find(x=>x.id===id),rec)}else{S.tx.push(Object.assign({id:uid()},rec))}
+  if(id){Object.assign(S.tx.find(x=>x.id===id),rec)}else{S.tx.push(Object.assign({id:uid()},rec));if(type==='in'){const sp=S.budget.split||{polina:20,dream:25,reserve:15};['polina','dream','reserve'].forEach(k=>{S.budget.pockets[k]=(S.budget.pockets[k]||0)+amount*(num(sp[k])/100)})}}
   month=rec.date.slice(0,7);
   save();closeSheet();render();
 }
@@ -477,24 +524,6 @@ function addPos(){
 function delPos(id){S.positions=S.positions.filter(p=>p.id!==id);save();openPos()}
 
 /* ---------- accounts: sheets ---------- */
-function openNewAcc(){
-  showSheet(`<h2>Новый счёт</h2>
-  <label>Тип</label><select id="n_kind"><option value="save">🐷 Копилка</option><option value="invest">📈 Инвестиции</option><option value="other">💳 Другой счёт</option></select>
-  <label>Название</label><input id="n_name" placeholder="Например: На отпуск">
-  <label>Цель (₽, необязательно)</label><input id="n_goal" type="number" inputmode="decimal" step="any" placeholder="Сколько хочешь накопить">
-  <label>Сколько уже на счёте (₽)</label><input id="n_start" type="number" inputmode="decimal" step="any" placeholder="0">
-  <div style="margin-top:16px" class="grid2"><button class="btn ghost" onclick="closeSheet()">Отмена</button>
-  <button class="btn main" onclick="saveNewAcc()">Создать</button></div>`);
-}
-function saveNewAcc(){
-  const kind=document.getElementById('n_kind').value;
-  const name=document.getElementById('n_name').value.trim()||KIND_NAME[kind];
-  const goal=num(document.getElementById('n_goal').value), start=num(document.getElementById('n_start').value);
-  const a={id:uid(),name,kind,icon:KIND_ICON[kind],goal:goal>0?goal:0};
-  S.accounts.push(a);
-  if(start>0)S.moves.push({id:uid(),date:today(),from:null,to:a.id,amount:start,kind:'init',note:'Начальный остаток'});
-  save();closeSheet();render();
-}
 function moveLabel(m,id){
   if(m.kind==='init')return 'Начальный остаток';
   if(m.kind==='adjust')return m.to===id?'Прибыль / переоценка':'Убыток / переоценка';
@@ -502,6 +531,7 @@ function moveLabel(m,id){
 }
 function openAcc(id){
   const a=accList().find(x=>x.id===id);if(!a)return;
+  if(a.kind==='pocket'){const key=a.key,b=bal(id),mv=S.moves.filter(m=>m.kind==='pocket_transfer'&&(m.from===id||m.to===id)).sort((x,y)=>y.date.localeCompare(x.date));showSheet(`<div style="text-align:center"><div style="font-size:40px">${a.icon}</div><div class="muted">${a.name}</div><div class="big">${fmt(b)}</div></div><button class="btn main" onclick="openTransfer('main','${id}')">Пополнить через перевод</button>${key==='dream'?`<button class="btn danger" style="margin-top:8px" onclick="destroyDream()">Списать с тройным подтверждением</button>`:''}<div class="sec">История переводов</div>${mv.length?mv.slice(0,30).map(m=>`<div class="item"><div class="l"><div class="t">${m.to===id?'Пополнение':'Перевод в '+accName(m.to)}</div><div class="muted">${dshort(m.date)}</div></div><div class="n ${m.to===id?'in':'out'}">${m.to===id?'+':'−'}${fmt(m.amount)}</div></div>`).join(''):'<div class="empty">Переводов пока нет</div>'}`);return;}
   const b=bal(id);
   const mv=S.moves.filter(m=>m.from===id||m.to===id).sort((x,y)=>y.date.localeCompare(x.date)||y.id.localeCompare(x.id));
   let extra='';
@@ -529,43 +559,31 @@ function openAcc(id){
   ${id!=='main'?`<button class="btn danger" style="margin-top:8px" onclick="delAcc('${id}')">Удалить счёт</button>`:''}`);
 }
 async function delMove(mid,accId){if(await ask('Удалить эту операцию по счёту?','Удалить',true)){S.moves=S.moves.filter(m=>m.id!==mid);save();openAcc(accId);render()}}
-async function delAcc(id){
-  if(!(await ask('Удалить счёт? Переводы с ним тоже удалятся, деньги вернутся на другие счета.','Удалить',true)))return;
-  S.accounts=S.accounts.filter(a=>a.id!==id);S.moves=S.moves.filter(m=>m.from!==id&&m.to!==id);
-  save();closeSheet();render();
-}
-async function setValue(id){
-  const b=bal(id);
-  const v=await dialog({text:'Текущая стоимость счёта в ₽ (сейчас '+fmt(b)+')',input:'number',def:b,ok:'Готово'});
-  if(v===null)return;
-  const nv=num(v), diff=nv-b;
-  if(Math.abs(diff)<0.005)return;
-  S.moves.push(diff>0?{id:uid(),date:today(),from:null,to:id,amount:diff,kind:'adjust'}:{id:uid(),date:today(),from:id,to:null,amount:-diff,kind:'adjust'});
-  save();openAcc(id);render();
-}
 function openTransfer(from,to){
-  const accs=accList();
-  if(accs.length<2){toast('Сначала создай второй счёт, например копилку');openNewAcc();return}
-  from=from||'main';
-  if(!to||to===from)to=(accs.find(a=>a.id!==from)||{}).id;
-  const opts=sel=>accs.map(a=>`<option value="${a.id}" ${a.id===sel?'selected':''}>${a.icon} ${esc(a.name)}</option>`).join('');
-  showSheet(`<h2>Перевод между счетами</h2>
-  <label>Откуда</label><select id="t_from">${opts(from)}</select>
-  <label>Куда</label><select id="t_to">${opts(to)}</select>
-  <label>Сумма (₽)</label><input id="t_amt" type="number" inputmode="decimal" step="any" placeholder="0">
-  <label>Дата</label><input id="t_date" type="date" value="${today()}">
-  <div style="margin-top:16px" class="grid2"><button class="btn ghost" onclick="closeSheet()">Отмена</button>
-  <button class="btn main" onclick="saveTransfer()">Перевести</button></div>`);
-  setTimeout(()=>document.getElementById('t_amt').focus(),50);
+ const accs=accList();from=from||'main';
+ // «Мечта» доступна только как получатель: вывод из неё выполняется отдельно через «Списать».
+ const sourceAccs=accs.filter(a=>a.id!=='pocket_dream');
+ if(from==='pocket_dream')from='main';
+ if(!to||to===from)to=(accs.find(a=>a.id!==from)||{}).id;
+ const opts=(list,sel)=>list.map(a=>`<option value="${a.id}" ${a.id===sel?'selected':''}>${a.icon} ${esc(a.name)}</option>`).join('');
+ showSheet(`<h2>Перевод</h2><label>Откуда</label><select id="t_from">${opts(sourceAccs,from)}</select><label>Куда</label><select id="t_to">${opts(accs,to)}</select><label>Сумма (₽)</label><input id="t_amt" type="number" inputmode="decimal" step="any" placeholder="0"><div class="muted" id="t_hint" style="margin-top:8px">Перевод в накопления уменьшает доступный дневной бюджет.</div><label>Дата</label><input id="t_date" type="date" value="${today()}"><div style="margin-top:16px" class="grid2"><button class="btn ghost" onclick="closeSheet()">Отмена</button><button class="btn main" onclick="saveTransfer()">Перевести</button></div>`);
+ setTimeout(()=>document.getElementById('t_amt').focus(),50);
 }
 async function saveTransfer(){
-  const from=document.getElementById('t_from').value, to=document.getElementById('t_to').value;
-  const amount=num(document.getElementById('t_amt').value), date=document.getElementById('t_date').value||today();
-  if(from===to){toast('Выбери разные счета');return}
-  if(!(amount>0)){toast('Введи сумму больше нуля');return}
-  if(bal(from)<amount&&!(await ask('На счёте «'+accName(from)+'» меньше этой суммы ('+fmt(bal(from))+'). Всё равно перевести?','Перевести')))return;
-  S.moves.push({id:uid(),date,from,to,amount,kind:'transfer'});
-  save();closeSheet();render();
+ const from=document.getElementById('t_from').value,to=document.getElementById('t_to').value;
+ const amount=num(document.getElementById('t_amt').value),date=document.getElementById('t_date').value||today();
+ if(from==='pocket_dream'){toast('Из «Мечты» нельзя переводить деньги. Для списания используй отдельную кнопку.');return}
+ if(from===to){toast('Выбери разные счета');return}if(!(amount>0)){toast('Введи сумму больше нуля');return}
+ const fk=from.startsWith('pocket_')?from.slice(7):null,tk=to.startsWith('pocket_')?to.slice(7):null;
+ const pocketTotal=Object.values(S.budget.pockets||{}).reduce((a,v)=>a+(Number(v)||0),0);
+ if(from==='main'&&tk){const available=Math.max(0,bal('main')-pocketTotal);if(amount>available){toast('Недостаточно свободных денег. Доступно '+fmt(available));return}S.budget.pockets[tk]=(Number(S.budget.pockets[tk])||0)+amount;S.moves.push({id:uid(),date,from,to,amount,kind:'pocket_transfer'});}
+ else if(fk&&to==='main'){
+   if(amount>bal(from)){toast('В накоплении недостаточно денег');return}
+   S.budget.pockets[fk]-=amount;S.moves.push({id:uid(),date,from,to,amount,kind:'pocket_transfer'});
+ }
+ else if(fk&&tk){if(amount>bal(from)){toast('Недостаточно денег в исходной копилке');return}S.budget.pockets[fk]-=amount;S.budget.pockets[tk]=(Number(S.budget.pockets[tk])||0)+amount;S.moves.push({id:uid(),date,from,to,amount,kind:'pocket_transfer'});}
+ else {toast('Такой перевод недоступен');return}
+ save();closeSheet();render();toast('Перевод выполнен.');
 }
 
 /* ---------- backup ---------- */
