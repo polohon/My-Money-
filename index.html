@@ -155,7 +155,11 @@ function accName(id){const a=accList().find(x=>x.id===id);return a?a.name:'—'}
 function bal(id){
   if(id&&id.startsWith('pocket_')){const key=id.slice(7);return Number(S.budget.pockets[key])||0}
   let b=0;
-  if(id==='main')b=sum(S.tx.filter(t=>t.type==='in'))-sum(S.tx.filter(t=>t.type==='out'));
+  if(id==='main'){
+    b=sum(S.tx.filter(t=>t.type==='in'))-sum(S.tx.filter(t=>t.type==='out'));
+    const pocketTotal=Object.values(S.budget.pockets||{}).reduce((a,v)=>a+(Number(v)||0),0);
+    b-=pocketTotal;
+  }
   S.moves.forEach(m=>{if(m.kind==='pocket_transfer')return;if(m.to===id)b+=m.amount;if(m.from===id)b-=m.amount});
   return b;
 }
@@ -182,8 +186,7 @@ function budgetDays(){
 function dailyBudgetData(){
   const b=S.budget||(S.budget={nextIncome:'',dailyOverride:0,pockets:{polina:0,dream:0,reserve:0},split:{polina:20,dream:25,reserve:15}});
   const days=budgetDays(), spent=S.tx.filter(t=>t.type==='out'&&t.date===today()).reduce((a,t)=>a+t.amount,0);
-  const pocketTotal=(b.pockets?.polina||0)+(b.pockets?.dream||0)+(b.pockets?.reserve||0);
-  const base=Math.max(0,bal('main')-pocketTotal);
+  const base=Math.max(0,bal('main'));
   // Ручной лимит — это верхняя граница: пополнение копилок тоже уменьшает дневной бюджет.
   const automaticLimit=base/days;
   const limit=b.dailyOverride>0?Math.min(b.dailyOverride,automaticLimit):automaticLimit;
@@ -579,8 +582,7 @@ async function saveTransfer(){
  if(from==='pocket_dream'){toast('Из «Мечты» нельзя переводить деньги. Для списания используй отдельную кнопку.');return}
  if(from===to){toast('Выбери разные счета');return}if(!(amount>0)){toast('Введи сумму больше нуля');return}
  const fk=from.startsWith('pocket_')?from.slice(7):null,tk=to.startsWith('pocket_')?to.slice(7):null;
- const pocketTotal=Object.values(S.budget.pockets||{}).reduce((a,v)=>a+(Number(v)||0),0);
- if(from==='main'&&tk){const available=Math.max(0,bal('main')-pocketTotal);if(amount>available){toast('Недостаточно свободных денег. Доступно '+fmt(available));return}S.budget.pockets[tk]=(Number(S.budget.pockets[tk])||0)+amount;S.moves.push({id:uid(),date,from,to,amount,kind:'pocket_transfer'});}
+ if(from==='main'&&tk){const available=Math.max(0,bal('main'));if(amount>available){toast('Недостаточно свободных денег. Доступно '+fmt(available));return}S.budget.pockets[tk]=(Number(S.budget.pockets[tk])||0)+amount;S.moves.push({id:uid(),date,from,to,amount,kind:'pocket_transfer'});}
  else if(fk&&to==='main'){
    if(amount>bal(from)){toast('В накоплении недостаточно денег');return}
    S.budget.pockets[fk]-=amount;S.moves.push({id:uid(),date,from,to,amount,kind:'pocket_transfer'});
