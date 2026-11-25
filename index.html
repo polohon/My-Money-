@@ -487,11 +487,15 @@ function openAdv(){
 function saveAdv(){
   const amount=num(document.getElementById('a_amt').value), date=document.getElementById('a_date').value||today();
   if(!(amount>0)){toast('Введи сумму больше нуля');return}
-  const a={id:uid(),date,amount};S.advances.push(a);
+  const sp=S.budget.split||{polina:20,dream:25,reserve:15};
+  const distribution={};
+  ['polina','dream','reserve'].forEach(k=>{distribution[k]=amount*(num(sp[k])/100)});
+  const a={id:uid(),date,amount,distribution};S.advances.push(a);
   S.tx.push({id:uid(),type:'in',amount,cat:'Основная работа',date,note:'Аванс',ref:a.id});
-  month=date.slice(0,7);save();closeSheet();render();
+  Object.keys(distribution).forEach(k=>{S.budget.pockets[k]=(Number(S.budget.pockets[k])||0)+distribution[k]});
+  month=date.slice(0,7);save();closeSheet();render();toast('Аванс распределён по накоплениям');
 }
-async function delAdv(id){if(await ask('Удалить аванс?','Удалить',true)){S.advances=S.advances.filter(x=>x.id!==id);S.tx=S.tx.filter(t=>t.ref!==id);save();render()}}
+async function delAdv(id){if(await ask('Удалить аванс?','Удалить',true)){const a=S.advances.find(x=>x.id===id);if(a&&a.distribution)Object.keys(a.distribution).forEach(k=>{S.budget.pockets[k]=Math.max(0,(Number(S.budget.pockets[k])||0)-Number(a.distribution[k]||0))});S.advances=S.advances.filter(x=>x.id!==id);S.tx=S.tx.filter(t=>t.ref!==id);save();render()}}
 function openClose(){
   const due=tot(S.shifts.filter(x=>x.date.startsWith(month)),'pay')-tot(S.advances.filter(x=>x.date.startsWith(month)),'amount');
   showSheet(`<h2>Закрыть месяц</h2>
